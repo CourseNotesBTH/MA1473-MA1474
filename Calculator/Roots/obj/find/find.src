@@ -1,0 +1,196 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -nomodsect -optspeed -noreduceopt -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"..\..\SRC\FIND\FIND.C"
+	.assume ADL=1
+	SEGMENT CODE
+;    1	#include "find.h"
+;    2	
+;    3	#include "../shared/shared.h"
+;    4	
+;    5	void handleFind() {
+_handleFind:
+	LD	HL,-52
+	CALL	__frameset
+;    6	  const char str[CHARACTER_WIDTH];
+;    7	  char input[INPUT_SIZE];
+;    8	
+;    9	  /* current number to test, room, exponent, found "roots" */
+;   10	  uint24_t x = 0, n = 0, k = 1, ones = 0;
+	LD	BC,0
+	LD	(IX+-6),BC
+	LD	(IX+-12),BC
+;   11	  uint24_t temp1 = 0, temp2 = 0;
+	LD	(IX+-16),BC
+;   12	
+;   13	  uint8_t row = 0;
+	LD	(IX+-13),0
+;   14	
+;   15	  os_GetStringInput("Enter room to test n: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-26
+	LD	BC,L__0
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   16	  n = atoi(input);
+	PEA	IX+-26
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-6),HL
+;   17	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   18	
+;   19	  for (x = 2; x <= n; x++) {
+	LD	BC,2
+	LD	(IX+-3),BC
+	JR	L_14
+L_12:
+;   20	    for (k = 1; k <= n; k++) {
+	LD	BC,1
+	LD	(IX+-9),BC
+	JR	L_8
+L_6:
+;   21	      temp1 = ipow(x, k);
+	LD	BC,(IX+-9)
+	PUSH	BC
+	LD	BC,(IX+-3)
+	PUSH	BC
+	CALL	_ipow
+	POP	BC
+	POP	BC
+	LD	(IX+-16),HL
+;   22	      temp2 = temp1 % n;
+	LD	BC,(IX+-6)
+	CALL	__iremu
+	LD	(IX+-19),HL
+;   23	      if (temp2 == 1)
+	LD	BC,1
+	OR	A,A
+	SBC	HL,BC
+	JR	NZ,L_7
+;   24	        ones++;
+	LD	BC,(IX+-12)
+	INC	BC
+	LD	(IX+-12),BC
+;   25	    }
+L_7:
+	LD	BC,(IX+-9)
+	INC	BC
+	LD	(IX+-9),BC
+L_8:
+	LD	BC,(IX+-9)
+	LD	HL,(IX+-6)
+	OR	A,A
+	SBC	HL,BC
+	JR	NC,L_6
+;   26	
+;   27	    if (ones == 1) {
+	LD	BC,1
+	LD	HL,(IX+-12)
+	OR	A,A
+	SBC	HL,BC
+	JR	NZ,L_11
+;   28	      sprintf(str, "%u is a root in Z%u", x, n);
+	LD	BC,(IX+-6)
+	PUSH	BC
+	LD	BC,(IX+-3)
+	PUSH	BC
+	LD	BC,L__4
+	PUSH	BC
+	PEA	IX+-52
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   29	      row = printLine(row, str);
+	PEA	IX+-52
+	LD	C,(IX+-13)
+	LD	B,0
+	PUSH	BC
+	CALL	_printLine
+	POP	BC
+	POP	BC
+	LD	(IX+-13),A
+;   30	    }
+L_11:
+;   31	    ones = 0;
+	LD	BC,0
+	LD	(IX+-12),BC
+	LD	BC,(IX+-3)
+	INC	BC
+	LD	(IX+-3),BC
+;   32	  }
+L_14:
+	LD	BC,(IX+-3)
+	LD	HL,(IX+-6)
+	OR	A,A
+	SBC	HL,BC
+	JR	NC,L_12
+;   33	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _handleFind ***************************
+;Name                         Addr/Register   Size   Type
+;_printLine                          IMPORT  -----   function
+;_sprintf                            IMPORT  -----   function
+;_ipow                               IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;_atoi                               IMPORT  -----   function
+;_os_GetStringInput                  IMPORT  -----   function
+;str                                  IX-52     26   variable
+;input                                IX-26      7   variable
+;temp2                                IX-19      3   variable
+;temp1                                IX-16      3   variable
+;row                                  IX-13      1   variable
+;ones                                 IX-12      3   variable
+;k                                     IX-9      3   variable
+;n                                     IX-6      3   variable
+;x                                     IX-3      3   variable
+
+
+; Stack Frame Size: 58 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__0:
+	DB	"Enter room to test n: "
+	DB	0
+L__4:
+	DB	"%u is a root in Z%u"
+	DB	0
+	XREF _ipow:ROM
+	XREF _printLine:ROM
+	XREF _atoi:ROM
+	XREF _sprintf:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _os_GetStringInput:ROM
+	XREF __iremu:ROM
+	XREF __frameset:ROM
+	XDEF _handleFind
+	END

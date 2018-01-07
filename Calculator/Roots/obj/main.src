@@ -1,0 +1,317 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -nomodsect -optspeed -noreduceopt -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"..\SRC\MAIN.C"
+	.assume ADL=1
+	SEGMENT STRSECT
+L__0:
+	DB	"root test"
+	DB	0
+L__1:
+	DB	"find roots"
+	DB	0
+	SEGMENT DATA
+_menu:
+	DW24	L__0
+	DW24	L__1
+;    1	#include <stdbool.h>
+;    2	#include <stddef.h>
+;    3	#include <stdint.h>
+;    4	#include <tice.h>
+;    5	
+;    6	#include <math.h>
+;    7	#include <stdio.h>
+;    8	#include <stdlib.h>
+;    9	#include <string.h>
+;   10	
+;   11	#include <debug.h>
+;   12	#include <keypadc.h>
+;   13	
+;   14	#include "shared/shared.h"
+;   15	#include "test/test.h"
+;   16	#include "find/find.h"
+;   17	
+;   18	#define MENU_CHOICES 2
+;   19	const char *menu[] = {"root test", "find roots"};
+	SEGMENT CODE
+;   20	
+;   21	void main(void) {
+_main:
+	LD	HL,-5
+	CALL	__frameset
+;   22	  const char str[CHARACTER_WIDTH];
+;   23	  char input[INPUT_SIZE];
+;   24	  kb_key_t key, previousKey;
+;   25	
+;   26	  bool menuVisible = true;
+	LD	(IX+-4),1
+;   27	
+;   28	  int8_t row = 0;
+;   29	  int8_t menuChoice = 0;
+	LD	(IX+-1),0
+;   30	
+;   31	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   32	  /* print menu */
+;   33	  for (row = 0; row < MENU_CHOICES; row++)
+	LD	(IX+-2),0
+	JR	L_5
+L_3:
+;   34	    print(row, 2, menu[row]);
+	LD	A,(IX+-2)
+	SEXT	HL
+	LD	L,(IX+-2)
+	LD	BC,HL
+	LD	HL,BC
+	ADD	HL,HL
+	ADD	HL,HL
+	OR	A,A
+	SBC	HL,BC
+	LD	BC,_menu
+	ADD	HL,BC
+	LD	BC,(HL)
+	PUSH	BC
+	LD	BC,2
+	PUSH	BC
+	LD	C,(IX+-2)
+	LD	B,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+	POP	BC
+	INC	(IX+-2)
+L_5:
+	LD	A,(IX+-2)
+	CP	A,2
+	JP	M,L__21
+	JP	PE,L_3
+	JR	L__22
+L__21:
+	JP	PO,L_3
+L__22:
+;   35	  /* print menu choice */
+;   36	  print(menuChoice, 0, ">");
+	LD	BC,L__3
+	PUSH	BC
+	LD	BC,0
+	PUSH	BC
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+	POP	BC
+;   37	
+;   38	  do {
+L_32:
+;   39	    kb_Scan();
+	CALL	_kb_Scan
+;   40	
+;   41	    key = kb_Data[7];
+	LD	A,(16056350)
+	LD	(IX+-3),A
+;   42	
+;   43	    if (key && key != previousKey) {
+	OR	A,A
+	JR	Z,L_23
+	LD	A,(IX+-3)
+	CP	A,(IX+-5)
+	JR	Z,L_23
+;   44	      if (key == kb_Up) {
+	LD	A,(IX+-3)
+	CP	A,8
+	JR	NZ,L_21
+;   45	        if (menuChoice > 0)
+	XOR	A,A
+	CP	A,(IX+-1)
+	JP	P,L_12
+;   46	          menuChoice--;
+	DEC	(IX+-1)
+;   47	        else if (menuChoice == 0)
+	JR	L_13
+L_12:
+	LD	A,(IX+-1)
+	OR	A,A
+	JR	NZ,L_13
+;   48	          menuChoice = MENU_CHOICES - 1;
+	LD	(IX+-1),1
+L_13:
+;   49	        clearFromLeft(MENU_CHOICES, " ");
+	LD	BC,L__9
+	PUSH	BC
+	LD	BC,2
+	PUSH	BC
+	CALL	_clearFromLeft
+	POP	BC
+	POP	BC
+;   50	        print(menuChoice, 0, ">");
+	LD	BC,L__10
+	PUSH	BC
+	LD	BC,0
+	PUSH	BC
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+	POP	BC
+;   51	      } else if (key == kb_Down) {
+	JR	L_23
+L_21:
+	LD	A,(IX+-3)
+	CP	A,1
+	JR	NZ,L_23
+;   52	        if (menuChoice < MENU_CHOICES - 1)
+	LD	A,(IX+-1)
+	CP	A,1
+	JP	P,L_17
+;   53	          menuChoice++;
+	INC	(IX+-1)
+;   54	        else if (menuChoice == MENU_CHOICES - 1)
+	JR	L_18
+L_17:
+	LD	A,(IX+-1)
+	CP	A,1
+	JR	NZ,L_18
+;   55	          menuChoice = 0;
+	LD	(IX+-1),0
+L_18:
+;   56	        clearFromLeft(MENU_CHOICES, " ");
+	LD	BC,L__14
+	PUSH	BC
+	LD	BC,2
+	PUSH	BC
+	CALL	_clearFromLeft
+	POP	BC
+	POP	BC
+;   57	        print(menuChoice, 0, ">");
+	LD	BC,L__15
+	PUSH	BC
+	LD	BC,0
+	PUSH	BC
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+	POP	BC
+;   58	      }
+;   59	    }
+L_23:
+;   60	    previousKey = key;
+	LD	A,(IX+-3)
+	LD	(IX+-5),A
+;   61	
+;   62	    if (kb_Data[6] == kb_Enter && menuVisible) {
+	LD	A,(16056348)
+	CP	A,1
+	JR	NZ,L_33
+	LD	A,(IX+-4)
+	OR	A,A
+	JR	Z,L_33
+;   63	      menuVisible = false;
+	LD	(IX+-4),0
+;   64	      os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   65	      if (menuChoice == 0)
+	LD	A,(IX+-1)
+	OR	A,A
+	JR	NZ,L_29
+;   66	        handleTest();
+	CALL	_handleTest
+;   67	      else if (menuChoice == 1)
+	JR	L_33
+L_29:
+	LD	A,(IX+-1)
+	CP	A,1
+	JR	NZ,L_33
+;   68	        handleFind();
+	CALL	_handleFind
+;   69	    }
+;   70	  } while (kb_Data[1] != kb_2nd);
+L_33:
+	LD	A,(16056338)
+	CP	A,32
+	JR	NZ,L_32
+;   71	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _main ***************************
+;Name                         Addr/Register   Size   Type
+;_handleFind                         IMPORT  -----   function
+;_handleTest                         IMPORT  -----   function
+;_clearFromLeft                      IMPORT  -----   function
+;_kb_Scan                            IMPORT  -----   function
+;_menu                               STATIC      6   variable
+;_print                              IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;previousKey                           IX-5      1   variable
+;menuVisible                           IX-4      1   variable
+;key                                   IX-3      1   variable
+;row                                   IX-2      1   variable
+;menuChoice                            IX-1      1   variable
+
+
+; Stack Frame Size: 11 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__3:
+	DB	">"
+	DB	0
+L__9:
+	DB	" "
+	DB	0
+L__10:
+	DB	">"
+	DB	0
+L__14:
+	DB	" "
+	DB	0
+L__15:
+	DB	">"
+	DB	0
+	XREF _handleFind:ROM
+	XREF _handleTest:ROM
+	XREF _clearFromLeft:ROM
+	XREF _print:ROM
+	XREF _kb_Scan:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF __frameset:ROM
+	XDEF _main
+	XDEF _menu
+	END

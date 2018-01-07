@@ -1,0 +1,360 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -nomodsect -optspeed -noreduceopt -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"..\SRC\MAIN.C"
+	.assume ADL=1
+	SEGMENT CODE
+;    1	#include <stdbool.h>
+;    2	#include <stddef.h>
+;    3	#include <stdint.h>
+;    4	#include <tice.h>
+;    5	
+;    6	#include <math.h>
+;    7	#include <stdio.h>
+;    8	#include <stdlib.h>
+;    9	#include <string.h>
+;   10	
+;   11	#include <debug.h>
+;   12	
+;   13	#define CHARACTER_WIDTH 26
+;   14	#define CHARACTER_HEIGHT 9
+;   15	#define square(x) (x * x)
+;   16	/* 6 characters = 999'999. 2^24 / 2 = 8388608. 999'999 < 8388608. 7 - 1(null) = 6 */
+;   17	#define INPUT_SIZE 7
+;   18	
+;   19	void print(int8_t row, const char *text);
+;   20	
+;   21	void main(void) {
+_main:
+	LD	HL,-55
+	CALL	__frameset
+;   22	  const char str[CHARACTER_WIDTH];
+;   23	  char input[INPUT_SIZE];
+;   24	
+;   25	  int8_t row = 0;
+;   26	
+;   27	  int24_t n = 119;
+	LD	BC,119
+	LD	(IX+-6),BC
+;   28	  uint16_t steps = 1;
+;   29	  uint24_t a = 18 + 1;
+	LD	BC,19
+	LD	(IX+-3),BC
+;   30	  uint24_t b2 = 0;
+;   31	  uint24_t b = 0;
+	LD	BC,0
+	LD	(IX+-12),BC
+;   32	
+;   33	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   34	
+;   35	  os_GetStringInput("Enter N: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-19
+	LD	BC,L__0
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   36	  n = atoi(input);
+	PEA	IX+-19
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-6),HL
+;   37	
+;   38	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   39	
+;   40	  a = ceil(sqrt(n));
+	LD	BC,(IX+-6)
+	CALL	__itol
+	CALL	__ltof
+	LD	DE,BC
+	LD	C,A
+	LD	B,0
+	PUSH	BC
+	PUSH	DE
+	CALL	_sqrt
+	POP	BC
+	POP	BC
+	LD	C,E
+	LD	B,0
+	PUSH	BC
+	PUSH	HL
+	CALL	_ceil
+	POP	BC
+	POP	BC
+	LD	A,E
+	LD	BC,HL
+	CALL	__ftol
+	LD	(IX+-3),BC
+;   41	  b2 = square(a) - n;
+	LD	HL,BC
+	CALL	__imulu
+	LD	BC,(IX+-6)
+	OR	A,A
+	SBC	HL,BC
+	LD	(IX+-9),HL
+;   42	
+;   43	  while(sqrt(b2) != floor(sqrt(b2)) && !os_GetCSC()) {
+	JR	L_8
+L_9:
+;   44	    a++;
+	LD	BC,(IX+-3)
+	INC	BC
+	LD	(IX+-3),BC
+;   45	    b2 = square(a) - n;
+	LD	DE,(IX+-6)
+	LD	HL,BC
+	CALL	__imulu
+	OR	A,A
+	SBC	HL,DE
+	LD	(IX+-9),HL
+;   46	  }
+L_8:
+	LD	BC,(IX+-9)
+	XOR	A,A
+	CALL	__ultof
+	LD	DE,BC
+	LD	C,A
+	LD	B,0
+	PUSH	BC
+	PUSH	DE
+	CALL	_sqrt
+	POP	BC
+	POP	BC
+	LD	C,E
+	LD	B,0
+	PUSH	BC
+	PUSH	HL
+	CALL	_floor
+	POP	BC
+	POP	BC
+	LD	BC,(IX+-9)
+	XOR	A,A
+	CALL	__ultof
+	LD	(IX+-48),HL	; spill
+	LD	(IX+-51),BC	; spill
+	LD	HL,(IX+-48)	; unspill
+	LD	C,A
+	LD	B,0
+	PUSH	BC
+	LD	(IX+-48),HL	; spill
+	LD	HL,(IX+-51)	; unspill
+	PUSH	HL
+	LD	HL,(IX+-48)	; unspill
+	LD	(IX+-54),HL
+	LD	(IX+-55),E
+	CALL	_sqrt
+	POP	BC
+	POP	BC
+	LD	A,E
+	LD	BC,HL
+	LD	HL,(IX+-54)
+	LD	E,(IX+-55)
+	CALL	__fcmp
+	JR	Z,L_10
+	CALL	_os_GetCSC
+	OR	A,A
+	JR	Z,L_9
+L_10:
+;   47	
+;   48	  b = sqrt(b2);
+	LD	BC,(IX+-9)
+	XOR	A,A
+	CALL	__ultof
+	LD	DE,BC
+	LD	C,A
+	LD	B,0
+	PUSH	BC
+	PUSH	DE
+	CALL	_sqrt
+	POP	BC
+	POP	BC
+	LD	A,E
+	LD	BC,HL
+	CALL	__ftol
+	LD	(IX+-12),BC
+;   49	
+;   50	  sprintf(str, "%d=%d*%d", n, a - b, n / (a - b));
+	LD	HL,(IX+-3)
+	OR	A,A
+	SBC	HL,BC
+	LD	DE,HL
+	LD	BC,DE
+	LD	HL,(IX+-6)
+	CALL	__idivu
+	PUSH	HL
+	LD	BC,DE
+	PUSH	BC
+	LD	BC,(IX+-6)
+	PUSH	BC
+	LD	BC,L__3
+	PUSH	BC
+	PEA	IX+-45
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   51	  print(row++, str);
+	PEA	IX+-45
+	LD	BC,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+;   52	
+;   53	  sprintf(str, "%d tries", a);
+	LD	BC,(IX+-3)
+	PUSH	BC
+	LD	BC,L__4
+	PUSH	BC
+	PEA	IX+-45
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+;   54	  print(row++, str);
+	PEA	IX+-45
+	LD	BC,1
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+;   55	
+;   56	  /* Wait for a key to be pressed */
+;   57	  while (!os_GetCSC());
+L_14:
+	CALL	_os_GetCSC
+	OR	A,A
+	JR	Z,L_14
+;   58	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _main ***************************
+;Name                         Addr/Register   Size   Type
+;_print                              IMPORT  -----   function
+;_sprintf                            IMPORT  -----   function
+;_os_GetCSC                          IMPORT  -----   function
+;_floor                              IMPORT  -----   function
+;_sqrt                               IMPORT  -----   function
+;_ceil                               IMPORT  -----   function
+;_atoi                               IMPORT  -----   function
+;_os_GetStringInput                  IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;str                                  IX-45     26   variable
+;input                                IX-19      7   variable
+;b                                    IX-12      3   variable
+;b2                                    IX-9      3   variable
+;n                                     IX-6      3   variable
+;a                                     IX-3      3   variable
+
+
+; Stack Frame Size: 61 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__0:
+	DB	"Enter N: "
+	DB	0
+L__3:
+	DB	"%d=%d*%d"
+	DB	0
+L__4:
+	DB	"%d tries"
+	DB	0
+	SEGMENT CODE
+;   59	
+;   60	void print(int8_t row, const char *text) {
+_print:
+	CALL	__frameset0
+;   61	  os_SetCursorPos(row, 0);
+	LD	BC,0
+	PUSH	BC
+	LD	C,(IX+6)
+	LD	B,0
+	PUSH	BC
+	CALL	_os_SetCursorPos
+	POP	BC
+	POP	BC
+;   62	  os_PutStrFull(text);
+	LD	BC,(IX+9)
+	PUSH	BC
+	CALL	_os_PutStrFull
+	POP	BC
+;   63	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _print ***************************
+;Name                         Addr/Register   Size   Type
+;_os_PutStrFull                      IMPORT  -----   function
+;_os_SetCursorPos                    IMPORT  -----   function
+;text                                  IX+9      3   parameter
+;row                                   IX+6      1   parameter
+
+
+; Stack Frame Size: 12 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	XREF _atoi:ROM
+	XREF _sprintf:ROM
+	XREF _floor:ROM
+	XREF _ceil:ROM
+	XREF _sqrt:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _os_GetCSC:ROM
+	XREF _os_GetStringInput:ROM
+	XREF _os_PutStrFull:ROM
+	XREF _os_SetCursorPos:ROM
+	XREF __idivu:ROM
+	XREF __imulu:ROM
+	XREF __fcmp:ROM
+	XREF __ftol:ROM
+	XREF __ltof:ROM
+	XREF __ultof:ROM
+	XREF __itol:ROM
+	XREF __frameset0:ROM
+	XREF __frameset:ROM
+	XDEF _print
+	XDEF _main
+	END

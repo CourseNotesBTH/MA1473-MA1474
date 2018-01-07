@@ -1,0 +1,536 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -nomodsect -optspeed -noreduceopt -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"..\SRC\MAIN.C"
+	.assume ADL=1
+	SEGMENT CODE
+;    1	#include <stdbool.h>
+;    2	#include <stddef.h>
+;    3	#include <stdint.h>
+;    4	#include <tice.h>
+;    5	
+;    6	#include <math.h>
+;    7	#include <stdio.h>
+;    8	#include <stdlib.h>
+;    9	#include <string.h>
+;   10	
+;   11	#include <debug.h>
+;   12	
+;   13	#define CHARACTER_WIDTH 26
+;   14	#define CHARACTER_HEIGHT 9
+;   15	/* 5 characters = 99'999. 2^24 / 2 = 8388608. 99'999 < 8388608. 6 - 1(null) = 5 */
+;   16	#define INPUT_SIZE 6
+;   17	
+;   18	void print(int8_t row, const char *text);
+;   19	
+;   20	void main(void) {
+_main:
+	LD	HL,-76
+	CALL	__frameset
+;   21	  const char str[CHARACTER_WIDTH];
+;   22	  char input[INPUT_SIZE];
+;   23	
+;   24	  int8_t row = 0;
+	LD	(IX+-1),0
+;   25	
+;   26	  int24_t a = 359;
+	LD	BC,359
+	LD	(IX+-4),BC
+;   27	  int24_t b = 43;
+	LD	BC,43
+	LD	(IX+-7),BC
+;   28	
+;   29	  int24_t u1 = 1;
+	LD	BC,1
+	LD	(IX+-29),BC
+;   30	  int24_t u2 = 0;
+	LD	BC,0
+	LD	(IX+-41),BC
+;   31	  int24_t u3 = a;
+;   32	  int24_t v1 = 0;
+	LD	(IX+-23),BC
+;   33	  int24_t v2 = 1;
+	LD	BC,1
+	LD	(IX+-26),BC
+;   34	  int24_t v3 = b;
+;   35	  int24_t q = 0;
+;   36	
+;   37	  int24_t temp = 0;
+;   38	  uint8_t steps = 1;
+	LD	(IX+-14),1
+;   39	
+;   40	  int24_t gcd = 0;
+;   41	  int24_t m = 0;
+;   42	  int24_t n = 0;
+;   43	
+;   44	  int24_t prev = a;
+;   45	
+;   46	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   47	
+;   48	  os_GetStringInput("Enter A: ", input, sizeof input);
+	LD	BC,6
+	PUSH	BC
+	PEA	IX+-50
+	LD	BC,L__0
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   49	  a = atoi(input);
+	PEA	IX+-50
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-4),HL
+;   50	
+;   51	
+;   52	  os_GetStringInput("Enter B: ", input, sizeof input);
+	LD	BC,6
+	PUSH	BC
+	PEA	IX+-50
+	LD	BC,L__1
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   53	  b = atoi(input);
+	PEA	IX+-50
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-7),HL
+;   54	
+;   55	  if (b > a) {
+	LD	BC,HL
+	LD	HL,(IX+-4)
+	OR	A,A
+	SBC	HL,BC
+	JP	P,L__14
+	JP	PE,L_4
+	JR	L__15
+L__14:
+	JP	PO,L_4
+L__15:
+;   56	    temp = b;
+	LD	BC,(IX+-7)
+	LD	(IX+-10),BC
+;   57	    b = a;
+	LD	BC,(IX+-4)
+	LD	(IX+-7),BC
+;   58	    a = temp;
+	LD	BC,(IX+-10)
+	LD	(IX+-4),BC
+;   59	  }
+L_4:
+;   60	
+;   61	  u3 = a;
+	LD	BC,(IX+-4)
+	LD	(IX+-17),BC
+;   62	  prev = a;
+	LD	BC,(IX+-4)
+	LD	(IX+-38),BC
+;   63	  v3 = b;
+	LD	BC,(IX+-7)
+	LD	(IX+-13),BC
+;   64	
+;   65	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   66	
+;   67	  if (a % b == 0) {
+	LD	HL,(IX+-4)
+	LD	BC,(IX+-7)
+	CALL	__irems
+	LD	BC,0
+	OR	A,A
+	SBC	HL,BC
+	JR	NZ,L_21
+;   68	    sprintf(str, "%d=%d*%d+0", a, b, (a / b));
+	LD	HL,(IX+-4)
+	LD	BC,(IX+-7)
+	CALL	__idivs
+	PUSH	HL
+	LD	BC,(IX+-7)
+	PUSH	BC
+	LD	BC,(IX+-4)
+	PUSH	BC
+	LD	BC,L__4
+	PUSH	BC
+	PEA	IX+-76
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   69	    print(row++, str);
+	PEA	IX+-76
+	LD	BC,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+;   70	    /* Wait for a key to be pressed */
+;   71	    while (!os_GetCSC());
+L_9:
+	CALL	_os_GetCSC
+	OR	A,A
+	JR	Z,L_9
+;   72	    return;
+	JR	L_29
+;   73	  }
+;   74	
+;   75	  while (v3 != 0) {
+L_22:
+;   76	    q = u3 / v3;
+	LD	HL,(IX+-17)
+	LD	BC,(IX+-13)
+	CALL	__idivs
+	LD	(IX+-20),HL
+;   77	
+;   78	    temp = v1;
+	LD	BC,(IX+-23)
+	LD	(IX+-10),BC
+;   79	    v1 = u1 - q * v1;
+	LD	HL,(IX+-20)
+	LD	BC,(IX+-23)
+	CALL	__imuls
+	LD	BC,HL
+	LD	HL,(IX+-29)
+	OR	A,A
+	SBC	HL,BC
+	LD	(IX+-23),HL
+;   80	    u1 = temp;
+	LD	BC,(IX+-10)
+	LD	(IX+-29),BC
+;   81	
+;   82	    temp = v2;
+	LD	BC,(IX+-26)
+	LD	(IX+-10),BC
+;   83	    v2 = u2 - q * v2;
+	LD	HL,(IX+-20)
+	LD	BC,(IX+-26)
+	CALL	__imuls
+	LD	BC,HL
+	LD	HL,(IX+-41)
+	OR	A,A
+	SBC	HL,BC
+	LD	(IX+-26),HL
+;   84	    u2 = temp;
+	LD	BC,(IX+-10)
+	LD	(IX+-41),BC
+;   85	
+;   86	    temp = v3;
+	LD	BC,(IX+-13)
+	LD	(IX+-10),BC
+;   87	    v3 = u3 - q * v3;
+	LD	HL,(IX+-20)
+	LD	BC,(IX+-13)
+	CALL	__imuls
+	LD	BC,HL
+	LD	HL,(IX+-17)
+	OR	A,A
+	SBC	HL,BC
+	LD	(IX+-13),HL
+;   88	    u3 = temp;
+	LD	BC,(IX+-10)
+	LD	(IX+-17),BC
+;   89	
+;   90	    sprintf(str, "%d=%d*%d+%d", prev, u3, q, v3);
+	LD	BC,(IX+-13)
+	PUSH	BC
+	LD	BC,(IX+-20)
+	PUSH	BC
+	LD	BC,(IX+-10)
+	PUSH	BC
+	LD	BC,(IX+-38)
+	PUSH	BC
+	LD	BC,L__6
+	PUSH	BC
+	PEA	IX+-76
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   91	    print(row++, str);
+	LD	C,(IX+-1)
+	INC	(IX+-1)
+	PEA	IX+-76
+	LD	B,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+;   92	
+;   93	    prev = u3;
+	LD	BC,(IX+-10)
+	LD	(IX+-38),BC
+;   94	
+;   95	    if (steps++ % (CHARACTER_HEIGHT - 1) == 0) {
+	LD	A,(IX+-14)
+	INC	(IX+-14)
+	UEXT	HL
+	LD	L,A
+	LD	BC,8
+	CALL	__irems
+	OR	A,A
+	LD	BC,0
+	SBC	HL,BC
+	JR	NZ,L_21
+;   96	      print(CHARACTER_HEIGHT, "Continue...");
+	LD	BC,L__8
+	PUSH	BC
+	LD	BC,9
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+;   97	      /* Wait for a key to be pressed */
+;   98	      while (!os_GetCSC());
+L_16:
+	CALL	_os_GetCSC
+	OR	A,A
+	JR	Z,L_16
+;   99	      row = 0;
+	LD	(IX+-1),0
+;  100	      os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;  101	    }
+;  102	  }
+L_21:
+	LD	BC,0
+	LD	HL,(IX+-13)
+	OR	A,A
+	SBC	HL,BC
+	JR	NZ,L_22
+;  103	
+;  104		gcd = u3;
+	LD	BC,(IX+-17)
+	LD	(IX+-32),BC
+;  105		m = u1;
+	LD	BC,(IX+-29)
+	LD	(IX+-35),BC
+;  106		n = (gcd - m*a) / b;
+	LD	HL,BC
+	LD	BC,(IX+-4)
+	CALL	__imuls
+	LD	BC,HL
+	LD	HL,(IX+-32)
+	OR	A,A
+	SBC	HL,BC
+	LD	BC,(IX+-7)
+	CALL	__idivs
+	LD	(IX+-44),HL
+;  107	
+;  108	  sprintf(str, "GCD: %d", gcd);
+	LD	BC,(IX+-32)
+	PUSH	BC
+	LD	BC,L__11
+	PUSH	BC
+	PEA	IX+-76
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+;  109	  print(row++, str);
+	LD	C,(IX+-1)
+	INC	(IX+-1)
+	PEA	IX+-76
+	LD	B,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+;  110	
+;  111	  sprintf(str, "%d=%d(%d)+%d(%d)", gcd, a, m, b, n);
+	LD	BC,(IX+-44)
+	PUSH	BC
+	LD	BC,(IX+-7)
+	PUSH	BC
+	LD	BC,(IX+-35)
+	PUSH	BC
+	LD	BC,(IX+-4)
+	PUSH	BC
+	LD	BC,(IX+-32)
+	PUSH	BC
+	LD	BC,L__12
+	PUSH	BC
+	PEA	IX+-76
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;  112	  print(row++, str);
+	PEA	IX+-76
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+;  113	
+;  114	  /* Wait for a key to be pressed */
+;  115	  while (!os_GetCSC());
+L_28:
+	CALL	_os_GetCSC
+	OR	A,A
+	JR	Z,L_28
+;  116	}
+L_29:
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _main ***************************
+;Name                         Addr/Register   Size   Type
+;_os_GetCSC                          IMPORT  -----   function
+;_print                              IMPORT  -----   function
+;_sprintf                            IMPORT  -----   function
+;_atoi                               IMPORT  -----   function
+;_os_GetStringInput                  IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;str                                  IX-76     26   variable
+;input                                IX-50      6   variable
+;n                                    IX-44      3   variable
+;u2                                   IX-41      3   variable
+;prev                                 IX-38      3   variable
+;m                                    IX-35      3   variable
+;gcd                                  IX-32      3   variable
+;u1                                   IX-29      3   variable
+;v2                                   IX-26      3   variable
+;v1                                   IX-23      3   variable
+;q                                    IX-20      3   variable
+;u3                                   IX-17      3   variable
+;steps                                IX-14      1   variable
+;v3                                   IX-13      3   variable
+;temp                                 IX-10      3   variable
+;b                                     IX-7      3   variable
+;a                                     IX-4      3   variable
+;row                                   IX-1      1   variable
+
+
+; Stack Frame Size: 82 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__0:
+	DB	"Enter A: "
+	DB	0
+L__1:
+	DB	"Enter B: "
+	DB	0
+L__4:
+	DB	"%d=%d*%d+0"
+	DB	0
+L__6:
+	DB	"%d=%d*%d+%d"
+	DB	0
+L__8:
+	DB	"Continue..."
+	DB	0
+L__11:
+	DB	"GCD: %d"
+	DB	0
+L__12:
+	DB	"%d=%d(%d)+%d(%d)"
+	DB	0
+	SEGMENT CODE
+;  117	
+;  118	void print(int8_t row, const char *text) {
+_print:
+	CALL	__frameset0
+;  119	  os_SetCursorPos(row, 0);
+	LD	BC,0
+	PUSH	BC
+	LD	C,(IX+6)
+	LD	B,0
+	PUSH	BC
+	CALL	_os_SetCursorPos
+	POP	BC
+	POP	BC
+;  120	  os_PutStrFull(text);
+	LD	BC,(IX+9)
+	PUSH	BC
+	CALL	_os_PutStrFull
+	POP	BC
+;  121	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _print ***************************
+;Name                         Addr/Register   Size   Type
+;_os_PutStrFull                      IMPORT  -----   function
+;_os_SetCursorPos                    IMPORT  -----   function
+;text                                  IX+9      3   parameter
+;row                                   IX+6      1   parameter
+
+
+; Stack Frame Size: 12 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	XREF _atoi:ROM
+	XREF _sprintf:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _os_GetCSC:ROM
+	XREF _os_GetStringInput:ROM
+	XREF _os_PutStrFull:ROM
+	XREF _os_SetCursorPos:ROM
+	XREF __idivs:ROM
+	XREF __imuls:ROM
+	XREF __irems:ROM
+	XREF __frameset0:ROM
+	XREF __frameset:ROM
+	XDEF _print
+	XDEF _main
+	END

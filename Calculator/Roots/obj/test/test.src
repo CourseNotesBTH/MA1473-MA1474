@@ -1,0 +1,269 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -nomodsect -optspeed -noreduceopt -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"..\..\SRC\TEST\TEST.C"
+	.assume ADL=1
+	SEGMENT CODE
+;    1	#include "test.h"
+;    2	
+;    3	#include "../shared/shared.h"
+;    4	
+;    5	void handleTest() {
+_handleTest:
+	LD	HL,-52
+	CALL	__frameset
+;    6	  const char str[CHARACTER_WIDTH];
+;    7	  char input[INPUT_SIZE];
+;    8	
+;    9	  /* number to test, room, exponent, found "roots" */
+;   10	  uint24_t x = 0, n = 0, k = 1, ones = 0;
+	LD	BC,0
+	LD	(IX+-7),BC
+	LD	(IX+-10),BC
+	LD	(IX+-13),BC
+;   11	  uint24_t temp1 = 0, temp2 = 0;
+	LD	(IX+-16),BC
+;   12	
+;   13	  uint8_t row = 0;
+	LD	(IX+-1),0
+;   14	
+;   15	  os_GetStringInput("Enter number to test x: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-26
+	LD	BC,L__0
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   16	  x = atoi(input);
+	PEA	IX+-26
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-7),HL
+;   17	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   18	  os_GetStringInput("Enter room to test n: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-26
+	LD	BC,L__1
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   19	  n = atoi(input);
+	PEA	IX+-26
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-10),HL
+;   20	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   21	
+;   22	  for (k = 1; k <= n; k++) {
+	LD	BC,1
+	LD	(IX+-4),BC
+	JR	L_11
+L_9:
+;   23	    temp1 = ipow(x, k);
+	LD	BC,(IX+-4)
+	PUSH	BC
+	LD	BC,(IX+-7)
+	PUSH	BC
+	CALL	_ipow
+	POP	BC
+	POP	BC
+	LD	(IX+-16),HL
+;   24	    temp2 = temp1 % n;
+	LD	BC,(IX+-10)
+	CALL	__iremu
+	LD	(IX+-19),HL
+;   25	    if (temp2 == 1)
+	LD	BC,1
+	OR	A,A
+	SBC	HL,BC
+	JR	NZ,L_8
+;   26	      ones++;
+	LD	BC,(IX+-13)
+	INC	BC
+	LD	(IX+-13),BC
+L_8:
+;   27	    sprintf(str, "%u^%u=%u=%u", x, k, temp1, temp2);
+	LD	BC,(IX+-19)
+	PUSH	BC
+	LD	BC,(IX+-16)
+	PUSH	BC
+	LD	BC,(IX+-4)
+	PUSH	BC
+	LD	BC,(IX+-7)
+	PUSH	BC
+	LD	BC,L__3
+	PUSH	BC
+	PEA	IX+-52
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   28	    row = printLine(row, str);
+	PEA	IX+-52
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_printLine
+	POP	BC
+	POP	BC
+	LD	(IX+-1),A
+	LD	BC,(IX+-4)
+	INC	BC
+	LD	(IX+-4),BC
+;   29	  }
+L_11:
+	LD	BC,(IX+-4)
+	LD	HL,(IX+-10)
+	OR	A,A
+	SBC	HL,BC
+	JR	NC,L_9
+;   30	
+;   31	  if (ones == 1) {
+	LD	BC,1
+	LD	HL,(IX+-13)
+	OR	A,A
+	SBC	HL,BC
+	JR	NZ,L_14
+;   32	    sprintf(str, "%u is a root in Z%u", x, n);
+	LD	BC,(IX+-10)
+	PUSH	BC
+	LD	BC,(IX+-7)
+	PUSH	BC
+	LD	BC,L__6
+	PUSH	BC
+	PEA	IX+-52
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   33	    row = printLine(row, str);
+	PEA	IX+-52
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_printLine
+	POP	BC
+	POP	BC
+	LD	(IX+-1),A
+;   34	  } else {
+	JR	L_16
+L_14:
+;   35	    sprintf(str, "%u is not a root in Z%u", x, n);
+	LD	BC,(IX+-10)
+	PUSH	BC
+	LD	BC,(IX+-7)
+	PUSH	BC
+	LD	BC,L__7
+	PUSH	BC
+	PEA	IX+-52
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   36	    row = printLine(row, str);
+	PEA	IX+-52
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_printLine
+	POP	BC
+	POP	BC
+	LD	(IX+-1),A
+;   37	  }
+;   38	}
+L_16:
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _handleTest ***************************
+;Name                         Addr/Register   Size   Type
+;_printLine                          IMPORT  -----   function
+;_sprintf                            IMPORT  -----   function
+;_ipow                               IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;_atoi                               IMPORT  -----   function
+;_os_GetStringInput                  IMPORT  -----   function
+;str                                  IX-52     26   variable
+;input                                IX-26      7   variable
+;temp2                                IX-19      3   variable
+;temp1                                IX-16      3   variable
+;ones                                 IX-13      3   variable
+;n                                    IX-10      3   variable
+;x                                     IX-7      3   variable
+;k                                     IX-4      3   variable
+;row                                   IX-1      1   variable
+
+
+; Stack Frame Size: 58 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__0:
+	DB	"Enter number to test x: "
+	DB	0
+L__1:
+	DB	"Enter room to test n: "
+	DB	0
+L__3:
+	DB	"%u^%u=%u=%u"
+	DB	0
+L__6:
+	DB	"%u is a root in Z%u"
+	DB	0
+L__7:
+	DB	"%u is not a root in Z%u"
+	DB	0
+	XREF _ipow:ROM
+	XREF _printLine:ROM
+	XREF _atoi:ROM
+	XREF _sprintf:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _os_GetStringInput:ROM
+	XREF __iremu:ROM
+	XREF __frameset:ROM
+	XDEF _handleTest
+	END

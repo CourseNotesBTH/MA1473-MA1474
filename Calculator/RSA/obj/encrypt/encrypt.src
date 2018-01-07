@@ -1,0 +1,160 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -nomodsect -optspeed -noreduceopt -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"..\..\SRC\ENCRYPT\ENCRYPT.C"
+	.assume ADL=1
+	SEGMENT CODE
+;    1	#include "encrypt.h"
+;    2	
+;    3	#include "../shared/shared.h"
+;    4	
+;    5	void handleEncrypt() {
+_handleEncrypt:
+	LD	HL,-16
+	CALL	__frameset
+;    6	  char input[INPUT_SIZE];
+;    7	
+;    8	  /* key, message, modulo */
+;    9	  uint24_t e, m, n;
+;   10	
+;   11	  os_GetStringInput("Enter message m: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-7
+	LD	BC,L__0
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   12	  m = atoi(input);
+	PEA	IX+-7
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-13),HL
+;   13	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   14	  os_GetStringInput("Enter key e: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-7
+	LD	BC,L__1
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   15	  e = atoi(input);
+	PEA	IX+-7
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-10),HL
+;   16	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   17	  os_GetStringInput("Enter mod n: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-7
+	LD	BC,L__2
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   18	  n = atoi(input);
+	PEA	IX+-7
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-16),HL
+;   19	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   20	
+;   21	  moduloExponent(m, e, n);
+	LD	BC,(IX+-16)
+	PUSH	BC
+	LD	BC,(IX+-10)
+	PUSH	BC
+	LD	BC,(IX+-13)
+	PUSH	BC
+	CALL	_moduloExponent
+	POP	BC
+	POP	BC
+	POP	BC
+;   22	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _handleEncrypt ***************************
+;Name                         Addr/Register   Size   Type
+;_moduloExponent                     IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;_atoi                               IMPORT  -----   function
+;_os_GetStringInput                  IMPORT  -----   function
+;n                                    IX-16      3   variable
+;m                                    IX-13      3   variable
+;e                                    IX-10      3   variable
+;input                                 IX-7      7   variable
+
+
+; Stack Frame Size: 22 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__0:
+	DB	"Enter message m: "
+	DB	0
+L__1:
+	DB	"Enter key e: "
+	DB	0
+L__2:
+	DB	"Enter mod n: "
+	DB	0
+	XREF _moduloExponent:ROM
+	XREF _atoi:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _os_GetStringInput:ROM
+	XREF __frameset:ROM
+	XDEF _handleEncrypt
+	END

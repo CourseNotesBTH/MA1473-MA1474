@@ -1,0 +1,258 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -nomodsect -optspeed -noreduceopt -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"..\..\SRC\SHARED\SHARED.C"
+	.assume ADL=1
+	SEGMENT CODE
+;    1	#include "shared.h"
+;    2	
+;    3	uint8_t print(int8_t row, int8_t column, const char *text) {
+_print:
+	CALL	__frameset0
+;    4	  os_SetCursorPos(row, column);
+	LD	C,(IX+9)
+	LD	B,0
+	PUSH	BC
+	LD	C,(IX+6)
+	PUSH	BC
+	CALL	_os_SetCursorPos
+	POP	BC
+	POP	BC
+;    5	  os_PutStrFull(text);
+	LD	BC,(IX+12)
+	PUSH	BC
+	CALL	_os_PutStrFull
+	POP	BC
+;    6	
+;    7	  if (row++ == CHARACTER_HEIGHT - 1) {
+	LD	A,(IX+6)
+	INC	(IX+6)
+	CP	A,8
+	JR	NZ,L_7
+;    8	    os_SetCursorPos(CHARACTER_HEIGHT, 0);
+	LD	BC,0
+	PUSH	BC
+	LD	BC,9
+	PUSH	BC
+	CALL	_os_SetCursorPos
+	POP	BC
+	POP	BC
+;    9	    os_PutStrFull("Continue...");
+	LD	BC,L__1
+	PUSH	BC
+	CALL	_os_PutStrFull
+	POP	BC
+;   10	    /* Wait for a key to be pressed */
+;   11	    while (!os_GetCSC());
+L_2:
+	CALL	_os_GetCSC
+	OR	A,A
+	JR	Z,L_2
+;   12	    row = 0;
+	LD	(IX+6),0
+;   13	    os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   14	  }
+L_7:
+;   15	
+;   16	  return row;
+	LD	A,(IX+6)
+;   17	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _print ***************************
+;Name                         Addr/Register   Size   Type
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;_os_GetCSC                          IMPORT  -----   function
+;_os_PutStrFull                      IMPORT  -----   function
+;_os_SetCursorPos                    IMPORT  -----   function
+;text                                 IX+12      3   parameter
+;column                                IX+9      1   parameter
+;row                                   IX+6      1   parameter
+
+
+; Stack Frame Size: 15 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__1:
+	DB	"Continue..."
+	DB	0
+	SEGMENT CODE
+;   18	
+;   19	uint8_t printLine(int8_t row, const char *text) {
+_printLine:
+	CALL	__frameset0
+;   20	  return print(row, 0, text);
+	LD	BC,(IX+9)
+	PUSH	BC
+	LD	BC,0
+	PUSH	BC
+	LD	C,(IX+6)
+	LD	B,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+	POP	BC
+;   21	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _printLine ***************************
+;Name                         Addr/Register   Size   Type
+;_print                              IMPORT  -----   function
+;text                                  IX+9      3   parameter
+;row                                   IX+6      1   parameter
+
+
+; Stack Frame Size: 12 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+;   22	
+;   23	void clearFromLeft(uint8_t rows, const char* clearString) {
+_clearFromLeft:
+	LD	HL,-1
+	CALL	__frameset
+;   24	  uint8_t row = 0;
+;   25	
+;   26	  for (row = 0; row < rows; row++)
+	LD	(IX+-1),0
+	JR	L_13
+L_11:
+;   27	    print(row, 0, clearString);
+	LD	BC,(IX+9)
+	PUSH	BC
+	LD	BC,0
+	PUSH	BC
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_print
+	POP	BC
+	POP	BC
+	POP	BC
+	INC	(IX+-1)
+L_13:
+	LD	A,(IX+-1)
+	CP	A,(IX+6)
+	JR	C,L_11
+;   28	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _clearFromLeft ***************************
+;Name                         Addr/Register   Size   Type
+;_print                              IMPORT  -----   function
+;row                                   IX-1      1   variable
+;clearString                           IX+9      3   parameter
+;rows                                  IX+6      1   parameter
+
+
+; Stack Frame Size: 13 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+;   29	
+;   30	int ipow(int base, int exp)
+;   31	{
+_ipow:
+	LD	HL,-3
+	CALL	__frameset
+;   32	  int result = 1;
+	LD	BC,1
+	LD	(IX+-3),BC
+;   33	  while (exp)
+	JR	L_17
+L_18:
+;   34	  {
+;   35	    if (exp & 1)
+	LD	A,(IX+9)
+	AND	A,1
+	UEXT	HL
+	LD	L,A
+	OR	A,A
+	SBC	HL,BC
+	JR	Z,L_16
+;   36	        result *= base;
+	LD	HL,(IX+-3)
+	LD	BC,(IX+6)
+	CALL	__imuls
+	LD	(IX+-3),HL
+L_16:
+;   37	    exp >>= 1;
+	LD	HL,(IX+9)
+	LD	A,1
+	CALL	__ishrs_b
+	LD	(IX+9),HL
+;   38	    base *= base;
+	LD	HL,(IX+6)
+	LD	BC,(IX+6)
+	CALL	__imuls
+	LD	(IX+6),HL
+;   39	  }
+L_17:
+	LD	BC,0
+	LD	HL,(IX+9)
+	OR	A,A
+	SBC	HL,BC
+	JR	NZ,L_18
+;   40	
+;   41	  return result;
+	LD	HL,(IX+-3)
+;   42	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _ipow ***************************
+;Name                         Addr/Register   Size   Type
+;result                                IX-3      3   variable
+;exp                                   IX+9      3   parameter
+;base                                  IX+6      3   parameter
+
+
+; Stack Frame Size: 15 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _os_GetCSC:ROM
+	XREF _os_PutStrFull:ROM
+	XREF _os_SetCursorPos:ROM
+	XREF __imuls:ROM
+	XREF __frameset0:ROM
+	XREF __frameset:ROM
+	XREF __ishrs_b:ROM
+	XDEF _ipow
+	XDEF _clearFromLeft
+	XDEF _printLine
+	XDEF _print
+	END
