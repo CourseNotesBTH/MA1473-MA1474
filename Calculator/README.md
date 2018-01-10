@@ -6,3 +6,6 @@ These are installed to the calculator by transferring the `.8xp` and `.8xv` file
 All programs are written in C using the aforementioned toolkit.
 
 More information is found in each respective README. 
+
+__NOTE!__
+Not all numbers will evaluate correctly. The largest value is an unsigned long int (32 bits), 4 294 967 296. If any step is above that number, the result will be inaccurate due to overflow. This cannot be solved simply due to the fact that there is no arbitary sized numbers available on the calculator. 
