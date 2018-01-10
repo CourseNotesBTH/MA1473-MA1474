@@ -10,7 +10,7 @@
 ;    4	
 ;    5	void handleFind() {
 _handleFind:
-	LD	HL,-52
+	LD	HL,-54
 	CALL	__frameset
 ;    6	  const char str[CHARACTER_WIDTH];
 ;    7	  char input[INPUT_SIZE];
@@ -20,8 +20,10 @@ _handleFind:
 	LD	BC,0
 	LD	(IX+-6),BC
 	LD	(IX+-12),BC
-;   11	  uint24_t temp1 = 0, temp2 = 0;
-	LD	(IX+-16),BC
+;   11	  uint32_t temp1 = 0, temp2 = 0;
+	LD	(IX+-17),BC
+	XOR	A,A
+	LD	(IX+-14),A
 ;   12	
 ;   13	  uint8_t row = 0;
 	LD	(IX+-13),0
@@ -29,7 +31,7 @@ _handleFind:
 ;   15	  os_GetStringInput("Enter room to test n: ", input, sizeof input);
 	LD	BC,7
 	PUSH	BC
-	PEA	IX+-26
+	PEA	IX+-28
 	LD	BC,L__0
 	PUSH	BC
 	CALL	_os_GetStringInput
@@ -37,7 +39,7 @@ _handleFind:
 	POP	BC
 	POP	BC
 ;   16	  n = atoi(input);
-	PEA	IX+-26
+	PEA	IX+-28
 	CALL	_atoi
 	POP	BC
 	LD	(IX+-6),HL
@@ -67,21 +69,40 @@ L_12:
 L_6:
 ;   21	      temp1 = ipow(x, k);
 	LD	BC,(IX+-9)
+	LD	DE,BC
+	XOR	A,A
+	LD	C,A
+	LD	B,0
 	PUSH	BC
+	PUSH	DE
 	LD	BC,(IX+-3)
+	LD	DE,BC
+	XOR	A,A
+	LD	C,A
+	LD	B,0
 	PUSH	BC
+	PUSH	DE
 	CALL	_ipow
 	POP	BC
 	POP	BC
-	LD	(IX+-16),HL
+	POP	BC
+	POP	BC
+	LD	(IX+-17),HL
+	LD	(IX+-14),E
 ;   22	      temp2 = temp1 % n;
 	LD	BC,(IX+-6)
-	CALL	__iremu
-	LD	(IX+-19),HL
+	LD	HL,(IX+-17)
+	LD	E,(IX+-14)
+	XOR	A,A
+	CALL	__lremu
+	LD	(IX+-21),HL
+	LD	(IX+-18),E
 ;   23	      if (temp2 == 1)
+	LD	HL,(IX+-21)
+	LD	E,(IX+-18)
 	LD	BC,1
-	OR	A,A
-	SBC	HL,BC
+	XOR	A,A
+	CALL	__lcmpu
 	JR	NZ,L_7
 ;   24	        ones++;
 	LD	BC,(IX+-12)
@@ -112,14 +133,14 @@ L_8:
 	PUSH	BC
 	LD	BC,L__4
 	PUSH	BC
-	PEA	IX+-52
+	PEA	IX+-54
 	CALL	_sprintf
 	POP	BC
 	POP	BC
 	POP	BC
 	POP	BC
 ;   29	      row = printLine(row, str);
-	PEA	IX+-52
+	PEA	IX+-54
 	LD	C,(IX+-13)
 	LD	B,0
 	PUSH	BC
@@ -159,10 +180,10 @@ L_14:
 ;__OS                                IMPORT  -----   function
 ;_atoi                               IMPORT  -----   function
 ;_os_GetStringInput                  IMPORT  -----   function
-;str                                  IX-52     26   variable
-;input                                IX-26      7   variable
-;temp2                                IX-19      3   variable
-;temp1                                IX-16      3   variable
+;str                                  IX-54     26   variable
+;input                                IX-28      7   variable
+;temp2                                IX-21      4   variable
+;temp1                                IX-17      4   variable
 ;row                                  IX-13      1   variable
 ;ones                                 IX-12      3   variable
 ;k                                     IX-9      3   variable
@@ -170,7 +191,7 @@ L_14:
 ;x                                     IX-3      3   variable
 
 
-; Stack Frame Size: 58 (bytes)
+; Stack Frame Size: 60 (bytes)
 ;       Spill Code: 0 (instruction)
 
 
@@ -190,7 +211,8 @@ L__4:
 	XREF _asm_HomeUp:ROM
 	XREF __OS:ROM
 	XREF _os_GetStringInput:ROM
-	XREF __iremu:ROM
+	XREF __lcmpu:ROM
+	XREF __lremu:ROM
 	XREF __frameset:ROM
 	XDEF _handleFind
 	END

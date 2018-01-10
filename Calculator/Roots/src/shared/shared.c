@@ -27,16 +27,41 @@ void clearFromLeft(uint8_t rows, const char* clearString) {
     print(row, 0, clearString);
 }
 
-int ipow(int base, int exp)
+uint32_t ipow(uint32_t base, uint32_t exponent)
 {
-  int result = 1;
-  while (exp)
+  uint32_t result = 1;
+  while (exponent)
   {
-    if (exp & 1)
+    if (exponent & 1)
         result *= base;
-    exp >>= 1;
+    exponent >>= 1;
     base *= base;
   }
 
   return result;
+}
+
+void reverse(char *string, int length)
+{
+    int i = 0, j = length - 1, temp;
+    while (i < j)
+    {
+        temp = string[i];
+        string[i++] = string[j];
+        string[j--] = temp;
+    }
+}
+
+int ultoa(uint32_t value, char *string)
+{
+  int i = 0;
+  while (value)
+  {
+      string[i++] = (value % 10) + '0';
+      value = value / 10;
+  }
+
+  reverse(string, i);
+  string[i] = '\0';
+  return i;
 }

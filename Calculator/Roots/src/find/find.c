@@ -8,7 +8,7 @@ void handleFind() {
 
   /* current number to test, room, exponent, found "roots" */
   uint24_t x = 0, n = 0, k = 1, ones = 0;
-  uint24_t temp1 = 0, temp2 = 0;
+  uint32_t temp1 = 0, temp2 = 0;
 
   uint8_t row = 0;
 

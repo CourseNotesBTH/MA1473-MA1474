@@ -177,52 +177,65 @@ L_13:
 
 
 ;   29	
-;   30	int ipow(int base, int exp)
+;   30	uint32_t ipow(uint32_t base, uint32_t exponent)
 ;   31	{
 _ipow:
-	LD	HL,-3
+	LD	HL,-4
 	CALL	__frameset
-;   32	  int result = 1;
+;   32	  uint32_t result = 1;
 	LD	BC,1
-	LD	(IX+-3),BC
-;   33	  while (exp)
+	LD	(IX+-4),BC
+	XOR	A,A
+	LD	(IX+-1),A
+;   33	  while (exponent)
 	JR	L_17
 L_18:
 ;   34	  {
-;   35	    if (exp & 1)
-	LD	A,(IX+9)
+;   35	    if (exponent & 1)
+	LD	A,(IX+12)
 	AND	A,1
 	UEXT	HL
 	LD	L,A
-	OR	A,A
-	SBC	HL,BC
+	XOR	A,A
+	LD	E,H
+	CALL	__lcmpu
 	JR	Z,L_16
 ;   36	        result *= base;
-	LD	HL,(IX+-3)
-	LD	BC,(IX+6)
-	CALL	__imuls
-	LD	(IX+-3),HL
+	LD	HL,(IX+6)
+	LD	E,(IX+9)
+	LD	BC,(IX+-4)
+	LD	A,(IX+-1)
+	CALL	__lmulu
+	LD	(IX+-4),HL
+	LD	(IX+-1),E
 L_16:
-;   37	    exp >>= 1;
-	LD	HL,(IX+9)
-	LD	A,1
-	CALL	__ishrs_b
-	LD	(IX+9),HL
+;   37	    exponent >>= 1;
+	LD	BC,(IX+12)
+	LD	A,(IX+15)
+	LD	L,1
+	CALL	__lshru
+	LD	(IX+12),BC
+	LD	(IX+15),A
 ;   38	    base *= base;
 	LD	HL,(IX+6)
+	LD	E,(IX+9)
 	LD	BC,(IX+6)
-	CALL	__imuls
+	LD	A,(IX+9)
+	CALL	__lmulu
 	LD	(IX+6),HL
+	LD	(IX+9),E
 ;   39	  }
 L_17:
+	LD	HL,(IX+12)
+	LD	E,(IX+15)
 	LD	BC,0
-	LD	HL,(IX+9)
-	OR	A,A
-	SBC	HL,BC
+	XOR	A,A
+	CALL	__lcmpu
 	JR	NZ,L_18
 ;   40	
 ;   41	  return result;
-	LD	HL,(IX+-3)
+	LD	HL,(IX+-4)
+	LD	E,(IX+-1)
 ;   42	}
 	LD	SP,IX
 	POP	IX
@@ -231,12 +244,163 @@ L_17:
 
 ;**************************** _ipow ***************************
 ;Name                         Addr/Register   Size   Type
-;result                                IX-3      3   variable
-;exp                                   IX+9      3   parameter
-;base                                  IX+6      3   parameter
+;result                                IX-4      4   variable
+;exponent                             IX+12      4   parameter
+;base                                  IX+6      4   parameter
 
 
-; Stack Frame Size: 15 (bytes)
+; Stack Frame Size: 22 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+;   43	
+;   44	void reverse(char *string, int length)
+;   45	{
+_reverse:
+	LD	HL,-9
+	CALL	__frameset
+;   46	    int i = 0, j = length - 1, temp;
+	LD	BC,0
+	LD	(IX+-3),BC
+	LD	BC,(IX+9)
+	DEC	BC
+	LD	(IX+-6),BC
+;   47	    while (i < j)
+	JR	L_23
+L_24:
+;   48	    {
+;   49	        temp = string[i];
+	LD	BC,(IX+-3)
+	LD	HL,(IX+6)
+	ADD	HL,BC
+	LD	A,(HL)
+	LD	B,A
+	SEXT	HL
+	LD	L,B
+	LD	(IX+-9),HL
+;   50	        string[i++] = string[j];
+	LD	BC,(IX+-6)
+	LD	HL,(IX+6)
+	ADD	HL,BC
+	LD	IY,HL
+	LD	HL,(IX+6)
+	LD	BC,(IX+-3)
+	ADD	HL,BC
+	LD	A,(IY)
+	LD	(HL),A
+	LD	BC,(IX+-3)
+	INC	BC
+	LD	(IX+-3),BC
+;   51	        string[j--] = temp;
+	LD	BC,(IX+-6)
+	LD	HL,(IX+6)
+	ADD	HL,BC
+	LD	A,(IX+-9)
+	LD	(HL),A
+	LD	BC,(IX+-6)
+	DEC	BC
+	LD	(IX+-6),BC
+;   52	    }
+L_23:
+	LD	BC,(IX+-6)
+	LD	HL,(IX+-3)
+	OR	A,A
+	SBC	HL,BC
+	JP	M,L_24
+;   53	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _reverse ***************************
+;Name                         Addr/Register   Size   Type
+;temp                                  IX-9      3   variable
+;j                                     IX-6      3   variable
+;i                                     IX-3      3   variable
+;length                                IX+9      3   parameter
+;string                                IX+6      3   parameter
+
+
+; Stack Frame Size: 21 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+;   54	
+;   55	int ultoa(uint32_t value, char *string)
+;   56	{
+_ultoa:
+	LD	HL,-3
+	CALL	__frameset
+;   57	  int i = 0;
+	LD	BC,0
+	LD	(IX+-3),BC
+;   58	  while (value)
+	JR	L_27
+L_28:
+;   59	  {
+;   60	      string[i++] = (value % 10) + '0';
+	LD	HL,(IX+6)
+	LD	E,(IX+9)
+	LD	BC,10
+	XOR	A,A
+	CALL	__lremu
+	LD	A,48
+	CALL	__ladd_b
+	LD	BC,HL
+	LD	HL,(IX+12)
+	LD	DE,(IX+-3)
+	ADD	HL,DE
+	LD	(HL),C
+	LD	BC,(IX+-3)
+	INC	BC
+	LD	(IX+-3),BC
+;   61	      value = value / 10;
+	LD	HL,(IX+6)
+	LD	E,(IX+9)
+	LD	BC,10
+	XOR	A,A
+	CALL	__ldivu
+	LD	(IX+6),HL
+	LD	(IX+9),E
+;   62	  }
+L_27:
+	LD	HL,(IX+6)
+	LD	E,(IX+9)
+	LD	BC,0
+	XOR	A,A
+	CALL	__lcmpu
+	JR	NZ,L_28
+;   63	
+;   64	  reverse(string, i);
+	LD	BC,(IX+-3)
+	PUSH	BC
+	LD	BC,(IX+12)
+	PUSH	BC
+	CALL	_reverse
+	POP	BC
+	POP	BC
+;   65	  string[i] = '\0';
+	LD	BC,(IX+-3)
+	LD	HL,(IX+12)
+	ADD	HL,BC
+	LD	(HL),0
+;   66	  return i;
+	LD	HL,(IX+-3)
+;   67	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _ultoa ***************************
+;Name                         Addr/Register   Size   Type
+;i                                     IX-3      3   variable
+;string                               IX+12      3   parameter
+;value                                 IX+6      4   parameter
+
+
+; Stack Frame Size: 18 (bytes)
 ;       Spill Code: 0 (instruction)
 
 
@@ -247,10 +411,16 @@ L_17:
 	XREF _os_GetCSC:ROM
 	XREF _os_PutStrFull:ROM
 	XREF _os_SetCursorPos:ROM
-	XREF __imuls:ROM
+	XREF __lcmpu:ROM
+	XREF __ldivu:ROM
+	XREF __lmulu:ROM
+	XREF __lremu:ROM
+	XREF __lshru:ROM
 	XREF __frameset0:ROM
 	XREF __frameset:ROM
-	XREF __ishrs_b:ROM
+	XREF __ladd_b:ROM
+	XDEF _ultoa
+	XDEF _reverse
 	XDEF _ipow
 	XDEF _clearFromLeft
 	XDEF _printLine

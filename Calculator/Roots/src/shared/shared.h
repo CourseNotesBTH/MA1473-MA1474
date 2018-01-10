@@ -22,5 +22,6 @@
   uint8_t print(int8_t row, int8_t column, const char *text);
   uint8_t printLine(int8_t row, const char *text);
   void clearFromLeft(uint8_t rows, const char* clearString);
-  int ipow(int base, int exp);
+  uint32_t ipow(uint32_t base, uint32_t exp);
+  int ultoa(uint32_t value, char *string);
 #endif
