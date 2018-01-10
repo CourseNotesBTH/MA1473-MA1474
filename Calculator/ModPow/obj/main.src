@@ -1,0 +1,196 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -nomodsect -optspeed -noreduceopt -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"..\SRC\MAIN.C"
+	.assume ADL=1
+	SEGMENT CODE
+;    1	#include <stdbool.h>
+;    2	#include <stddef.h>
+;    3	#include <stdint.h>
+;    4	#include <tice.h>
+;    5	
+;    6	#include <math.h>
+;    7	#include <stdio.h>
+;    8	#include <stdlib.h>
+;    9	#include <string.h>
+;   10	
+;   11	#include <debug.h>
+;   12	#include <keypadc.h>
+;   13	
+;   14	#include "shared/shared.h"
+;   15	
+;   16	void main(void) {
+_main:
+	LD	HL,-16
+	CALL	__frameset
+;   17	  const char str[CHARACTER_WIDTH];
+;   18	  char input[INPUT_SIZE];
+;   19	
+;   20	  /* base, exponent, modulo room */
+;   21	  uint24_t a, b, n;
+;   22	
+;   23	  uint8_t row = 0;
+;   24	
+;   25	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   26	  os_GetStringInput("Enter base a: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-7
+	LD	BC,L__0
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   27	  a = atoi(input);
+	PEA	IX+-7
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-10),HL
+;   28	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   29	  os_GetStringInput("Enter exponent b: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-7
+	LD	BC,L__1
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   30	  b = atoi(input);
+	PEA	IX+-7
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-13),HL
+;   31	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   32	  os_GetStringInput("Enter modulo n: ", input, sizeof input);
+	LD	BC,7
+	PUSH	BC
+	PEA	IX+-7
+	LD	BC,L__2
+	PUSH	BC
+	CALL	_os_GetStringInput
+	POP	BC
+	POP	BC
+	POP	BC
+;   33	  n = atoi(input);
+	PEA	IX+-7
+	CALL	_atoi
+	POP	BC
+	LD	(IX+-16),HL
+;   34	  os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   35	
+;   36	  moduloExponent(a, b, n);
+	LD	BC,(IX+-16)
+	PUSH	BC
+	LD	BC,(IX+-13)
+	PUSH	BC
+	LD	BC,(IX+-10)
+	PUSH	BC
+	CALL	_moduloExponent
+	POP	BC
+	POP	BC
+	POP	BC
+;   37	
+;   38	  /* Wait for a key to be pressed */
+;   39	  while (!os_GetCSC());
+L_13:
+	CALL	_os_GetCSC
+	OR	A,A
+	JR	Z,L_13
+;   40	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _main ***************************
+;Name                         Addr/Register   Size   Type
+;_os_GetCSC                          IMPORT  -----   function
+;_moduloExponent                     IMPORT  -----   function
+;_atoi                               IMPORT  -----   function
+;_os_GetStringInput                  IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;n                                    IX-16      3   variable
+;b                                    IX-13      3   variable
+;a                                    IX-10      3   variable
+;input                                 IX-7      7   variable
+
+
+; Stack Frame Size: 22 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__0:
+	DB	"Enter base a: "
+	DB	0
+L__1:
+	DB	"Enter exponent b: "
+	DB	0
+L__2:
+	DB	"Enter modulo n: "
+	DB	0
+	XREF _moduloExponent:ROM
+	XREF _atoi:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _os_GetCSC:ROM
+	XREF _os_GetStringInput:ROM
+	XREF __frameset:ROM
+	XDEF _main
+	END
