@@ -177,21 +177,308 @@ L_13:
 
 
 ;   29	
-;   30	uint32_t ipow(uint32_t base, uint32_t exponent)
-;   31	{
+;   30	uint24_t moduloExponent(uint24_t base, uint24_t exponent, uint24_t modulo) {
+_moduloExponent:
+	LD	HL,-25
+	CALL	__frameset
+;   31	  int *powers = NULL;
+	LD	BC,0
+	LD	(IX+-5),BC
+;   32	
+;   33	  uint32_t temp1, temp2, temp3;
+;   34	
+;   35	  /* highest power of two lower than n */
+;   36	  uint8_t maxExponent = 1;
+	LD	(IX+-2),1
+;   37	  int8_t i = 0;
+	LD	(IX+-1),0
+;   38	
+;   39	  maxExponent = floor(log(exponent) / log(2));
+	LD	BC,(IX+9)
+	XOR	A,A
+	CALL	__ultof
+	LD	DE,BC
+	LD	C,A
+	LD	B,0
+	PUSH	BC
+	PUSH	DE
+	CALL	_log
+	POP	BC
+	POP	BC
+	LD	C,64
+	LD	B,0
+	PUSH	BC
+	LD	BC,0
+	PUSH	BC
+	LD	(IX+-24),HL
+	LD	A,E
+	LD	(IX+-25),A
+	CALL	_log
+	LD	A,(IX+-25)
+	POP	BC
+	POP	BC
+	LD	BC,(IX+-24)
+	CALL	__fdiv
+	LD	DE,BC
+	LD	C,A
+	LD	B,0
+	PUSH	BC
+	PUSH	DE
+	CALL	_floor
+	POP	BC
+	POP	BC
+	LD	A,E
+	LD	BC,HL
+	CALL	__ftol
+	LD	(IX+-2),C
+;   40	  powers = (int*) malloc(maxExponent * sizeof(uint32_t));
+	LD	A,(IX+-2)
+	UEXT	HL
+	LD	L,A
+	ADD	HL,HL
+	ADD	HL,HL
+	PUSH	HL
+	CALL	_malloc
+	POP	BC
+	LD	(IX+-5),HL
+;   41	
+;   42	  temp1 = base % modulo;
+	LD	HL,(IX+6)
+	LD	BC,(IX+12)
+	CALL	__iremu
+	LD	(IX+-9),HL
+	XOR	A,A
+	LD	(IX+-6),A
+;   43	  powers[0] = temp1;
+	LD	BC,HL
+	LD	HL,(IX+-5)
+	LD	(HL),BC
+;   44	
+;   45	  /* Calculate simplified products and print each step */
+;   46	  for (i = 1; i <= maxExponent; i++) {
+	LD	(IX+-1),1
+	JR	L_18
+L_16:
+;   47	    temp1 = ipow(2, i);
+	LD	A,(IX+-1)
+	SEXT	HL
+	LD	C,H
+	LD	B,0
+	LD	L,(IX+-1)
+	PUSH	BC
+	PUSH	HL
+	LD	BC,0
+	PUSH	BC
+	LD	BC,2
+	PUSH	BC
+	CALL	_ipow
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	(IX+-9),HL
+	LD	(IX+-6),E
+;   48	    temp2 = ipow(powers[i - 1], 2);
+	LD	BC,0
+	PUSH	BC
+	LD	BC,2
+	PUSH	BC
+	LD	A,(IX+-1)
+	SEXT	HL
+	LD	L,(IX+-1)
+	LD	BC,HL
+	DEC	BC
+	LD	HL,BC
+	ADD	HL,HL
+	ADD	HL,HL
+	OR	A,A
+	SBC	HL,BC
+	LD	BC,(IX+-5)
+	ADD	HL,BC
+	LD	BC,(HL)
+	CALL	__itol
+	LD	DE,BC
+	LD	C,A
+	LD	B,0
+	PUSH	BC
+	PUSH	DE
+	CALL	_ipow
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	(IX+-17),HL
+	LD	(IX+-14),E
+;   49	    temp3 = temp2 % modulo;
+	LD	BC,(IX+12)
+	LD	HL,(IX+-17)
+	LD	E,(IX+-14)
+	XOR	A,A
+	CALL	__lremu
+	LD	(IX+-13),HL
+	LD	(IX+-10),E
+;   50	    powers[i] = temp3;
+	LD	DE,(IX+-13)
+	LD	A,(IX+-1)
+	SEXT	HL
+	LD	L,(IX+-1)
+	LD	BC,HL
+	LD	HL,BC
+	ADD	HL,HL
+	ADD	HL,HL
+	OR	A,A
+	SBC	HL,BC
+	LD	BC,(IX+-5)
+	ADD	HL,BC
+	LD	(HL),DE
+	INC	(IX+-1)
+;   51	  }
+L_18:
+	LD	A,(IX+-2)
+	CP	A,(IX+-1)
+	JP	P,L_16
+;   52	
+;   53	  /* Calculate exponents needed */
+;   54	  temp1 = 0; /* current exponent */
+	LD	BC,0
+	LD	(IX+-9),BC
+	XOR	A,A
+	LD	(IX+-6),A
+;   55	  temp3 = 1; /* current result */
+	LD	BC,1
+	LD	(IX+-13),BC
+	XOR	A,A
+	LD	(IX+-10),A
+;   56	  for (i = maxExponent; i >= 0; i--) {
+	LD	A,(IX+-2)
+	LD	(IX+-1),A
+	JR	L_24
+L_22:
+;   57	    temp2 = ipow(2, i);
+	LD	A,(IX+-1)
+	SEXT	HL
+	LD	C,H
+	LD	B,0
+	LD	L,(IX+-1)
+	PUSH	BC
+	PUSH	HL
+	LD	BC,0
+	PUSH	BC
+	LD	BC,2
+	PUSH	BC
+	CALL	_ipow
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	(IX+-17),HL
+	LD	(IX+-14),E
+;   58	    if (temp1 + temp2 <= exponent) {
+	LD	HL,(IX+-17)
+	LD	E,(IX+-14)
+	LD	BC,(IX+-9)
+	LD	A,(IX+-6)
+	CALL	__ladd
+	LD	(IX+-21),HL
+	LD	(IX+-18),E
+	XOR	A,A
+	LD	E,A
+	LD	A,(IX+-18)
+	LD	HL,(IX+9)
+	LD	BC,(IX+-21)
+	CALL	__lcmpu
+	JR	C,L_23
+;   59	      temp1 += temp2;
+	LD	BC,(IX+-21)
+	LD	A,(IX+-18)
+	LD	(IX+-9),BC
+	LD	(IX+-6),A
+;   60	      temp3 = (temp3 * powers[i]) % modulo;
+	LD	A,(IX+-1)
+	SEXT	HL
+	LD	L,(IX+-1)
+	LD	BC,HL
+	LD	HL,BC
+	ADD	HL,HL
+	ADD	HL,HL
+	OR	A,A
+	SBC	HL,BC
+	LD	BC,(IX+-5)
+	ADD	HL,BC
+	LD	BC,(HL)
+	CALL	__itol
+	LD	E,A
+	LD	HL,BC
+	LD	BC,(IX+-13)
+	LD	A,(IX+-10)
+	CALL	__lmulu
+	LD	BC,(IX+12)
+	XOR	A,A
+	CALL	__lremu
+	LD	(IX+-13),HL
+	LD	(IX+-10),E
+;   61	    }
+;   62	  }
+L_23:
+	DEC	(IX+-1)
+L_24:
+	LD	A,(IX+-1)
+	OR	A,A
+	JP	P,L_22
+;   63	
+;   64	  free(powers);
+	LD	BC,(IX+-5)
+	PUSH	BC
+	CALL	_free
+	POP	BC
+;   65	
+;   66	  return temp3;
+	LD	HL,(IX+-13)
+;   67	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _moduloExponent ***************************
+;Name                         Addr/Register   Size   Type
+;_free                               IMPORT  -----   function
+;_ipow                               IMPORT  -----   function
+;_malloc                             IMPORT  -----   function
+;_log                                IMPORT  -----   function
+;_floor                              IMPORT  -----   function
+;G_0                                  IX-21      4   variable
+;temp2                                IX-17      4   variable
+;temp3                                IX-13      4   variable
+;temp1                                 IX-9      4   variable
+;powers                                IX-5      3   variable
+;maxExponent                           IX-2      1   variable
+;i                                     IX-1      1   variable
+;modulo                               IX+12      3   parameter
+;exponent                              IX+9      3   parameter
+;base                                  IX+6      3   parameter
+
+
+; Stack Frame Size: 40 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+;   68	
+;   69	uint32_t ipow(uint32_t base, uint32_t exponent)
+;   70	{
 _ipow:
 	LD	HL,-4
 	CALL	__frameset
-;   32	  uint32_t result = 1;
+;   71	  uint32_t result = 1;
 	LD	BC,1
 	LD	(IX+-4),BC
 	XOR	A,A
 	LD	(IX+-1),A
-;   33	  while (exponent)
-	JR	L_17
-L_18:
-;   34	  {
-;   35	    if (exponent & 1)
+;   72	  while (exponent)
+	JR	L_29
+L_30:
+;   73	  {
+;   74	    if (exponent & 1)
 	LD	A,(IX+12)
 	AND	A,1
 	UEXT	HL
@@ -199,8 +486,8 @@ L_18:
 	XOR	A,A
 	LD	E,H
 	CALL	__lcmpu
-	JR	Z,L_16
-;   36	        result *= base;
+	JR	Z,L_28
+;   75	        result *= base;
 	LD	HL,(IX+6)
 	LD	E,(IX+9)
 	LD	BC,(IX+-4)
@@ -208,15 +495,15 @@ L_18:
 	CALL	__lmulu
 	LD	(IX+-4),HL
 	LD	(IX+-1),E
-L_16:
-;   37	    exponent >>= 1;
+L_28:
+;   76	    exponent >>= 1;
 	LD	BC,(IX+12)
 	LD	A,(IX+15)
 	LD	L,1
 	CALL	__lshru
 	LD	(IX+12),BC
 	LD	(IX+15),A
-;   38	    base *= base;
+;   77	    base *= base;
 	LD	HL,(IX+6)
 	LD	E,(IX+9)
 	LD	BC,(IX+6)
@@ -224,19 +511,19 @@ L_16:
 	CALL	__lmulu
 	LD	(IX+6),HL
 	LD	(IX+9),E
-;   39	  }
-L_17:
+;   78	  }
+L_29:
 	LD	HL,(IX+12)
 	LD	E,(IX+15)
 	LD	BC,0
 	XOR	A,A
 	CALL	__lcmpu
-	JR	NZ,L_18
-;   40	
-;   41	  return result;
+	JR	NZ,L_30
+;   79	
+;   80	  return result;
 	LD	HL,(IX+-4)
 	LD	E,(IX+-1)
-;   42	}
+;   81	}
 	LD	SP,IX
 	POP	IX
 	RET	
@@ -253,23 +540,23 @@ L_17:
 ;       Spill Code: 0 (instruction)
 
 
-;   43	
-;   44	void reverse(char *string, int length)
-;   45	{
+;   82	
+;   83	void reverse(char *string, int length)
+;   84	{
 _reverse:
 	LD	HL,-9
 	CALL	__frameset
-;   46	    int i = 0, j = length - 1, temp;
+;   85	    int i = 0, j = length - 1, temp;
 	LD	BC,0
 	LD	(IX+-3),BC
 	LD	BC,(IX+9)
 	DEC	BC
 	LD	(IX+-6),BC
-;   47	    while (i < j)
-	JR	L_23
-L_24:
-;   48	    {
-;   49	        temp = string[i];
+;   86	    while (i < j)
+	JR	L_35
+L_36:
+;   87	    {
+;   88	        temp = string[i];
 	LD	BC,(IX+-3)
 	LD	HL,(IX+6)
 	ADD	HL,BC
@@ -278,7 +565,7 @@ L_24:
 	SEXT	HL
 	LD	L,B
 	LD	(IX+-9),HL
-;   50	        string[i++] = string[j];
+;   89	        string[i++] = string[j];
 	LD	BC,(IX+-6)
 	LD	HL,(IX+6)
 	ADD	HL,BC
@@ -291,7 +578,7 @@ L_24:
 	LD	BC,(IX+-3)
 	INC	BC
 	LD	(IX+-3),BC
-;   51	        string[j--] = temp;
+;   90	        string[j--] = temp;
 	LD	BC,(IX+-6)
 	LD	HL,(IX+6)
 	ADD	HL,BC
@@ -300,14 +587,19 @@ L_24:
 	LD	BC,(IX+-6)
 	DEC	BC
 	LD	(IX+-6),BC
-;   52	    }
-L_23:
+;   91	    }
+L_35:
 	LD	BC,(IX+-6)
 	LD	HL,(IX+-3)
 	OR	A,A
 	SBC	HL,BC
-	JP	M,L_24
-;   53	}
+	JP	M,L__15
+	JP	PE,L_36
+	JR	L__16
+L__15:
+	JP	PO,L_36
+L__16:
+;   92	}
 	LD	SP,IX
 	POP	IX
 	RET	
@@ -326,20 +618,20 @@ L_23:
 ;       Spill Code: 0 (instruction)
 
 
-;   54	
-;   55	int ultoa(uint32_t value, char *string)
-;   56	{
+;   93	
+;   94	int ultoa(uint32_t value, char *string)
+;   95	{
 _ultoa:
 	LD	HL,-3
 	CALL	__frameset
-;   57	  int i = 0;
+;   96	  int i = 0;
 	LD	BC,0
 	LD	(IX+-3),BC
-;   58	  while (value)
-	JR	L_27
-L_28:
-;   59	  {
-;   60	      string[i++] = (value % 10) + '0';
+;   97	  while (value)
+	JR	L_39
+L_40:
+;   98	  {
+;   99	      string[i++] = (value % 10) + '0';
 	LD	HL,(IX+6)
 	LD	E,(IX+9)
 	LD	BC,10
@@ -355,7 +647,7 @@ L_28:
 	LD	BC,(IX+-3)
 	INC	BC
 	LD	(IX+-3),BC
-;   61	      value = value / 10;
+;  100	      value = value / 10;
 	LD	HL,(IX+6)
 	LD	E,(IX+9)
 	LD	BC,10
@@ -363,16 +655,16 @@ L_28:
 	CALL	__ldivu
 	LD	(IX+6),HL
 	LD	(IX+9),E
-;   62	  }
-L_27:
+;  101	  }
+L_39:
 	LD	HL,(IX+6)
 	LD	E,(IX+9)
 	LD	BC,0
 	XOR	A,A
 	CALL	__lcmpu
-	JR	NZ,L_28
-;   63	
-;   64	  reverse(string, i);
+	JR	NZ,L_40
+;  102	
+;  103	  reverse(string, i);
 	LD	BC,(IX+-3)
 	PUSH	BC
 	LD	BC,(IX+12)
@@ -380,14 +672,14 @@ L_27:
 	CALL	_reverse
 	POP	BC
 	POP	BC
-;   65	  string[i] = '\0';
+;  104	  string[i] = '\0';
 	LD	BC,(IX+-3)
 	LD	HL,(IX+12)
 	ADD	HL,BC
 	LD	(HL),0
-;   66	  return i;
+;  105	  return i;
 	LD	HL,(IX+-3)
-;   67	}
+;  106	}
 	LD	SP,IX
 	POP	IX
 	RET	
@@ -404,6 +696,10 @@ L_27:
 ;       Spill Code: 0 (instruction)
 
 
+	XREF _free:ROM
+	XREF _malloc:ROM
+	XREF _floor:ROM
+	XREF _log:ROM
 	XREF _asm_DrawStatusBar:ROM
 	XREF _asm_ClrLCD:ROM
 	XREF _asm_HomeUp:ROM
@@ -412,16 +708,23 @@ L_27:
 	XREF _os_PutStrFull:ROM
 	XREF _os_SetCursorPos:ROM
 	XREF __lcmpu:ROM
+	XREF __ladd:ROM
 	XREF __ldivu:ROM
 	XREF __lmulu:ROM
+	XREF __iremu:ROM
 	XREF __lremu:ROM
 	XREF __lshru:ROM
+	XREF __fdiv:ROM
+	XREF __ftol:ROM
+	XREF __ultof:ROM
+	XREF __itol:ROM
 	XREF __frameset0:ROM
 	XREF __frameset:ROM
 	XREF __ladd_b:ROM
 	XDEF _ultoa
 	XDEF _reverse
 	XDEF _ipow
+	XDEF _moduloExponent
 	XDEF _clearFromLeft
 	XDEF _printLine
 	XDEF _print

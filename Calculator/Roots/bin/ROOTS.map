@@ -4,7 +4,7 @@ Copyright (C) 1999-2008 Zilog, Inc. All Rights Reserved
 
 LINK MAP:
 
-DATE:      Wed Jan 10 18:38:13 2018
+DATE:      Wed Jan 10 19:07:08 2018
 PROCESSOR: assembler
 FILES:     obj/find/find.obj
            obj/main.obj           
@@ -30,8 +30,8 @@ SPACE ALLOCATION:
 
 Space                     Base         Top      Size      Used    Unused
 ------------------ ----------- ----------- --------- --------- ---------
-RAM                   D:D1A87F    D:D1B441   300000H      BC3H   2FF43DH
-                                          (  3145728      3011   3142717)
+RAM                   D:D031F6    D:D1B79B   300000H      F23H   2FF0DDH
+                                          (  3145728      3875   3141853)
 
 
 SEGMENTS WITHIN SPACE:
@@ -46,58 +46,74 @@ RAM                Type                Base        Top         Size
 .keypadc_header    normal data            D:D1A8D2    D:D1A8DB        ah
 .launcher          normal data            D:D1A882    D:D1A8D1       50h
 .startup           normal data            D:D1A8E0    D:D1A91A       3bh
-CODE               normal data            D:D1A937    D:D1B2DC      9a6h
-DATA               normal data            D:D1B2DD    D:D1B384       a8h
-TEXT               normal data            D:D1B385    D:D1B441       bdh
+BSS                normal data            D:D031F6    D:D031FB        6h
+CODE               normal data            D:D1A937    D:D1B631      cfbh
+DATA               normal data            D:D1B632    D:D1B6DC       abh
+TEXT               normal data            D:D1B6DD    D:D1B79B       bfh
 
 SEGMENTS WITHIN MODULES:
 ========================
 
-Module: ..\..\SRC\FIND\FIND.C (File: obj/find/find.obj) Version: 1:0 01/10/2018 18:38:10
+Module: ..\..\SRC\FIND\FIND.C (File: obj/find/find.obj) Version: 1:0 01/10/2018 19:06:25
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1A937    D:D1AA5C      126h
-    Segment: TEXT (was STRSECT)                D:D1B385    D:D1B3AF       2bh
+    Segment: CODE                              D:D1A937    D:D1AA2E       f8h
+    Segment: TEXT (was STRSECT)                D:D1B6DD    D:D1B707       2bh
 
 
-Module: ..\..\SRC\SHARED\SHARED.C (File: obj/shared/shared.obj) Version: 1:0 01/10/2018 18:38:12
-
-    Name                                        Base        Top      Size
-    --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1ABE9    D:D1AE11      229h
-    Segment: TEXT (was STRSECT)                D:D1B3CF    D:D1B3DA        ch
-
-
-Module: ..\..\SRC\TEST\TEST.C (File: obj/test/test.obj) Version: 1:0 01/10/2018 18:38:12
+Module: ..\..\SRC\SHARED\SHARED.C (File: obj/shared/shared.obj) Version: 1:0 01/10/2018 19:07:07
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1AE12    D:D1AFF1      1e0h
-    Segment: TEXT (was STRSECT)                D:D1B3DB    D:D1B441       67h
+    Segment: CODE                              D:D1ABBB    D:D1AFED      433h
+    Segment: TEXT (was STRSECT)                D:D1B727    D:D1B732        ch
 
 
-Module: ..\SRC\MAIN.C (File: obj/main.obj) Version: 1:0 01/10/2018 18:38:11
+Module: ..\..\SRC\TEST\TEST.C (File: obj/test/test.obj) Version: 1:0 01/10/2018 19:07:07
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1AA5D    D:D1ABE8      18ch
-    Segment: DATA                              D:D1B2DD    D:D1B2E2        6h
-    Segment: TEXT (was STRSECT)                D:D1B3B0    D:D1B3CE       1fh
+    Segment: CODE                              D:D1AFEE    D:D1B15A      16dh
+    Segment: TEXT (was STRSECT)                D:D1B733    D:D1B79B       69h
+
+
+Module: ..\SRC\MAIN.C (File: obj/main.obj) Version: 1:0 01/10/2018 19:06:26
+
+    Name                                        Base        Top      Size
+    --------------------------------------- ----------- ----------- ---------
+    Segment: CODE                              D:D1AA2F    D:D1ABBA      18ch
+    Segment: DATA                              D:D1B632    D:D1B637        6h
+    Segment: TEXT (was STRSECT)                D:D1B708    D:D1B726       1fh
+
+
+Module: .\FREE.C (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:32
+
+    Name                                        Base        Top      Size
+    --------------------------------------- ----------- ----------- ---------
+    Segment: CODE                              D:D1B15B    D:D1B24D       f3h
+
+
+Module: .\MALLOC.C (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:33
+
+    Name                                        Base        Top      Size
+    --------------------------------------- ----------- ----------- ---------
+    Segment: BSS                               D:D031F6    D:D031FB        6h
+    Segment: CODE                              D:D1B24E    D:D1B326       d9h
 
 
 Module: .\MAPTAB.C (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:33
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: DATA                              D:D1B305    D:D1B384       80h
+    Segment: DATA                              D:D1B65D    D:D1B6DC       80h
 
 
 Module: .\STRTOL.C (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:35
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1B01F    D:D1B24A      22ch
+    Segment: CODE                              D:D1B354    D:D1B57F      22ch
 
 
 Module: keypadc_header.asm (File: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/keypadc_header.obj) Version: 1:0 12/14/2017 23:41:49
@@ -111,14 +127,14 @@ Module: Z:\Users\adriweb\Documents\toolchain\src\ce\getstringinput.src (Library:
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1B271    D:D1B2DC       6ch
+    Segment: CODE                              D:D1B5C6    D:D1B631       6ch
 
 
 Module: Z:\Users\adriweb\Documents\toolchain\src\ce\os.src (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cce.lib) Version: 1:0 12/14/2017 23:41:50
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1B267    D:D1B270        ah
+    Segment: CODE                              D:D1B5BC    D:D1B5C5        ah
 
 
 Module: Z:\Users\adriweb\Documents\toolchain\src\keypadc\kb_Scan.src (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/keypadc.lib) Version: 1:0 12/14/2017 23:41:49
@@ -149,52 +165,60 @@ Module: Z:\Users\adriweb\Documents\toolchain\src\startup\libheader.asm (File: /U
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
     Segment: .launcher                         D:D1A882    D:D1A8D1       50h
-    Segment: DATA                              D:D1B2E3    D:D1B304       22h
+    Segment: DATA                              D:D1B638    D:D1B659       22h
 
 
 Module: Z:\Users\adriweb\Documents\toolchain\src\std\shared\atoi.src (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:04
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1B00B    D:D1B01E       14h
+    Segment: CODE                              D:D1B340    D:D1B353       14h
 
 
 Module: Z:\Users\adriweb\Documents\toolchain\src\std\shared\frameset.src (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:10
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1AFFD    D:D1B00A        eh
+    Segment: CODE                              D:D1B332    D:D1B33F        eh
 
 
 Module: Z:\Users\adriweb\Documents\toolchain\src\std\shared\frameset0.src (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:10
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1AFF2    D:D1AFFC        bh
+    Segment: CODE                              D:D1B327    D:D1B331        bh
 
 
 Module: Z:\Users\adriweb\Documents\toolchain\src\std\shared\icmpzero.src (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:13
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1B24B    D:D1B24F        5h
+    Segment: CODE                              D:D1B5A0    D:D1B5A4        5h
 
 
 Module: Z:\Users\adriweb\Documents\toolchain\src\std\shared\isspace.src (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:17
 
     Name                                        Base        Top      Size
     --------------------------------------- ----------- ----------- ---------
-    Segment: CODE                              D:D1B250    D:D1B266       17h
+    Segment: CODE                              D:D1B5A5    D:D1B5BB       17h
+
+
+Module: Z:\Users\adriweb\Documents\toolchain\src\std\shared\sbrk.src (Library: /Users/alexgustafsson/Documents/Calculator/CEdev/lib/cshared.lib) Version: 1:0 12/14/2017 23:42:24
+
+    Name                                        Base        Top      Size
+    --------------------------------------- ----------- ----------- ---------
+    Segment: CODE                              D:D1B580    D:D1B59F       20h
+    Segment: DATA                              D:D1B65A    D:D1B65C        3h
 
 EXTERNAL DEFINITIONS:
 =====================
 
 Symbol                             Address   Module          Segment
 -------------------------------- ----------- --------------- --------------------------------
-__len_bss                           00000000 (User Defined)
 __copy_code_to_ram                  00000000 (User Defined)
-__low_bss                           00000000 (User Defined)
-__heapbot                           00000001 (User Defined)
+__len_bss                           00000006 (User Defined)
+__low_bss                           00D031F6 (User Defined)
+__heapbot                           00D031FC (User Defined)
 __heaptop                           00D13FD6 (User Defined)
 __stack                             00D1A87E (User Defined)
 _boot_GetBootMajorVer               D:000080 tice            CODE                            
@@ -202,7 +226,7 @@ _boot_GetHardwareVer                D:000084 tice            CODE
 _boot_GetBootMinorVer               D:00008C tice            CODE                            
 _boot_DebugPrintf                   D:0000B4 tice            CODE                            
 _sprintf                            D:0000BC sprintf         CODE                            
-_strcat                             D:0000C0 strcat          CODE                            
+__iremu                             D:000170 iremu           CODE                            
 __itol                              D:000194 itol            CODE                            
 __ladd                              D:00019C ladd            CODE                            
 __ladd_b                            D:0001A0 ladd            CODE                            
@@ -216,6 +240,9 @@ __lneg                              D:0001D0 lneg            CODE
 __lremu                             D:0001E0 lremu           CODE                            
 __lshru                             D:0001EC lshru           CODE                            
 __setflag                           D:000218 setflag         CODE                            
+__fdiv                              D:000278 fpdiv           CODE                            
+__ftol                              D:00027C fpftol          CODE                            
+__ultof                             D:000280 fpultof         CODE                            
 _boot_ClearVRAM                     D:000374 tice            CODE                            
 _boot_TurnOff                       D:000388 tice            CODE                            
 _boot_NewLine                       D:000390 tice            CODE                            
@@ -320,48 +347,56 @@ _os_MemChk                          D:021FF0 tice            CODE
 _asm_ArcChk                         D:022040 tice            CODE                            
 _os_SetTimer2                       D:022080 tice            CODE                            
 _os_DisableTimer2                   D:022084 tice            CODE                            
+_log                                D:0220E4 log             CODE                            
+_floor                              D:0220F4 floor           CODE                            
 _os_FloatToReal                     D:022170 tice            CODE                            
 _os_RealToFloat                     D:022174 tice            CODE                            
 _os_FontDrawTransText               D:022178 tice            CODE                            
 _os_CreateAppVar                    D:022184 tice            CODE                            
 _errno                              D:D008DC cstartup        CODE                            
+__alloc_base                        D:D031F6 MALLOC          BSS                             
 _init                               D:D1A882 cstartup        .header                         
 _kb_Scan                            D:D1A8DC kb_Scan         .keypadc                        
 __exit                              D:D1A90D cstartup        .startup                        
 __errsp                             D:D1A90D cstartup        .startup                        
 _exit                               D:D1A931 cstartup        .exit                           
 _handleFind                         D:D1A937 FIND            CODE                            
-_main                               D:D1AA5D MAIN            CODE                            
-_print                              D:D1ABE9 SHARED          CODE                            
-_printLine                          D:D1AC5B SHARED          CODE                            
-_clearFromLeft                      D:D1AC7A SHARED          CODE                            
-_ipow                               D:D1ACAE SHARED          CODE                            
-_reverse                            D:D1AD2E SHARED          CODE                            
-_ultoa                              D:D1AD96 SHARED          CODE                            
-_handleTest                         D:D1AE12 TEST            CODE                            
-__frameset0                         D:D1AFF2 frameset0       CODE                            
-__frameset                          D:D1AFFD frameset        CODE                            
-_atoi                               D:D1B00B atoi            CODE                            
-_strtol                             D:D1B01F STRTOL          CODE                            
-__icmpzero                          D:D1B24B icmpzero        CODE                            
-_isspace                            D:D1B250 isspace         CODE                            
-__OS                                D:D1B267 os              CODE                            
-_os_GetStringInput                  D:D1B271 getstringinput  CODE                            
-_menu                               D:D1B2DD MAIN            DATA                            
-___maptab                           D:D1B305 MAPTAB          DATA                            
+_main                               D:D1AA2F MAIN            CODE                            
+_print                              D:D1ABBB SHARED          CODE                            
+_printLine                          D:D1AC2D SHARED          CODE                            
+_clearFromLeft                      D:D1AC4C SHARED          CODE                            
+_moduloExponent                     D:D1AC80 SHARED          CODE                            
+_ipow                               D:D1AE80 SHARED          CODE                            
+_reverse                            D:D1AF00 SHARED          CODE                            
+_ultoa                              D:D1AF72 SHARED          CODE                            
+_handleTest                         D:D1AFEE TEST            CODE                            
+_free                               D:D1B15B FREE            CODE                            
+_malloc                             D:D1B27F MALLOC          CODE                            
+__frameset0                         D:D1B327 frameset0       CODE                            
+__frameset                          D:D1B332 frameset        CODE                            
+_atoi                               D:D1B340 atoi            CODE                            
+_strtol                             D:D1B354 STRTOL          CODE                            
+__s_sbrk                            D:D1B580 sbrk            CODE                            
+__icmpzero                          D:D1B5A0 icmpzero        CODE                            
+_isspace                            D:D1B5A5 isspace         CODE                            
+__OS                                D:D1B5BC os              CODE                            
+_os_GetStringInput                  D:D1B5C6 getstringinput  CODE                            
+_menu                               D:D1B632 MAIN            DATA                            
+___maptab                           D:D1B65D MAPTAB          DATA                            
 
-158 external symbol(s).
+168 external symbol(s).
 
 SYMBOL CROSS REFERENCE:
 =======================
 Name                              Use         Module
 --------------------------------- ----------- -------------------------
+__copy_code_to_ram                Defined     LINKER
 __len_bss                         Defined     LINKER
                                   Referenced  Z:\Users\adriweb\Documents\toolchain\src\startup\cstartup.asm
-__copy_code_to_ram                Defined     LINKER
 __low_bss                         Defined     LINKER
                                   Referenced  Z:\Users\adriweb\Documents\toolchain\src\startup\cstartup.asm
 __heapbot                         Defined     LINKER
+                                  Referenced  Z:\Users\adriweb\Documents\toolchain\src\std\shared\sbrk.src
 __heaptop                         Defined     LINKER
 __stack                           Defined     LINKER
 _boot_GetBootMajorVer             Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
@@ -371,20 +406,20 @@ _boot_DebugPrintf                 Defined     Z:\Users\adriweb\Documents\toolcha
 _sprintf                          Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\sprintf.src
                                   Referenced  ..\..\SRC\FIND\FIND.C
                                   Referenced  ..\..\SRC\TEST\TEST.C
-_strcat                           Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\strcat.src
-                                  Referenced  ..\..\SRC\TEST\TEST.C
+__iremu                           Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\iremu.src
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
 __itol                            Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\itol.src
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
                                   Referenced  .\STRTOL.C
 __ladd                            Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\ladd.src
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
                                   Referenced  .\STRTOL.C
 __ladd_b                          Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\ladd.src
                                   Referenced  ..\..\SRC\SHARED\SHARED.C
 __lcmps                           Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\lcmps.src
                                   Referenced  .\STRTOL.C
 __lcmpu                           Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\lcmpu.src
-                                  Referenced  ..\..\SRC\FIND\FIND.C
                                   Referenced  ..\..\SRC\SHARED\SHARED.C
-                                  Referenced  ..\..\SRC\TEST\TEST.C
 __ldivu                           Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\ldivu.src
                                   Referenced  ..\..\SRC\SHARED\SHARED.C
 __ldvrmu                          Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\ldivu.src
@@ -395,13 +430,17 @@ __lmulu                           Defined     Z:\Users\adriweb\Documents\toolcha
 __lneg                            Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\lneg.src
                                   Referenced  .\STRTOL.C
 __lremu                           Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\lremu.src
-                                  Referenced  ..\..\SRC\FIND\FIND.C
                                   Referenced  ..\..\SRC\SHARED\SHARED.C
-                                  Referenced  ..\..\SRC\TEST\TEST.C
 __lshru                           Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\lshru.src
                                   Referenced  ..\..\SRC\SHARED\SHARED.C
 __setflag                         Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\setflag.src
                                   Referenced  .\STRTOL.C
+__fdiv                            Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\fpdiv.src
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
+__ftol                            Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\fpftol.src
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
+__ultof                           Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\fpultof.src
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
 _boot_ClearVRAM                   Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
 _boot_TurnOff                     Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
 _boot_NewLine                     Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
@@ -522,12 +561,18 @@ _os_MemChk                        Defined     Z:\Users\adriweb\Documents\toolcha
 _asm_ArcChk                       Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
 _os_SetTimer2                     Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
 _os_DisableTimer2                 Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
+_log                              Defined     Z:\Users\adriweb\Documents\toolchain\src\std\linked\log.src
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
+_floor                            Defined     Z:\Users\adriweb\Documents\toolchain\src\std\linked\floor.src
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
 _os_FloatToReal                   Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
 _os_RealToFloat                   Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
 _os_FontDrawTransText             Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
 _os_CreateAppVar                  Defined     Z:\Users\adriweb\Documents\toolchain\src\ce\tice.src
 _errno                            Defined     Z:\Users\adriweb\Documents\toolchain\src\startup\cstartup.asm
                                   Referenced  .\STRTOL.C
+__alloc_base                      Defined     .\MALLOC.C
+                                  Referenced  .\FREE.C
 _init                             Defined     Z:\Users\adriweb\Documents\toolchain\src\startup\cstartup.asm
 _kb_Scan                          Defined     Z:\Users\adriweb\Documents\toolchain\src\keypadc\kb_Scan.src
                                   Referenced  ..\SRC\MAIN.C
@@ -545,14 +590,18 @@ _printLine                        Defined     ..\..\SRC\SHARED\SHARED.C
                                   Referenced  ..\..\SRC\TEST\TEST.C
 _clearFromLeft                    Defined     ..\..\SRC\SHARED\SHARED.C
                                   Referenced  ..\SRC\MAIN.C
-_ipow                             Defined     ..\..\SRC\SHARED\SHARED.C
+_moduloExponent                   Defined     ..\..\SRC\SHARED\SHARED.C
                                   Referenced  ..\..\SRC\FIND\FIND.C
                                   Referenced  ..\..\SRC\TEST\TEST.C
+_ipow                             Defined     ..\..\SRC\SHARED\SHARED.C
 _reverse                          Defined     ..\..\SRC\SHARED\SHARED.C
 _ultoa                            Defined     ..\..\SRC\SHARED\SHARED.C
-                                  Referenced  ..\..\SRC\TEST\TEST.C
 _handleTest                       Defined     ..\..\SRC\TEST\TEST.C
                                   Referenced  ..\SRC\MAIN.C
+_free                             Defined     .\FREE.C
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
+_malloc                           Defined     .\MALLOC.C
+                                  Referenced  ..\..\SRC\SHARED\SHARED.C
 __frameset0                       Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\frameset0.src
                                   Referenced  ..\..\SRC\SHARED\SHARED.C
 __frameset                        Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\frameset.src
@@ -560,13 +609,19 @@ __frameset                        Defined     Z:\Users\adriweb\Documents\toolcha
                                   Referenced  ..\SRC\MAIN.C
                                   Referenced  ..\..\SRC\SHARED\SHARED.C
                                   Referenced  ..\..\SRC\TEST\TEST.C
+                                  Referenced  .\FREE.C
+                                  Referenced  .\MALLOC.C
                                   Referenced  .\STRTOL.C
 _atoi                             Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\atoi.src
                                   Referenced  ..\..\SRC\FIND\FIND.C
                                   Referenced  ..\..\SRC\TEST\TEST.C
 _strtol                           Defined     .\STRTOL.C
                                   Referenced  Z:\Users\adriweb\Documents\toolchain\src\std\shared\atoi.src
+__s_sbrk                          Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\sbrk.src
+                                  Referenced  .\MALLOC.C
 __icmpzero                        Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\icmpzero.src
+                                  Referenced  .\FREE.C
+                                  Referenced  .\MALLOC.C
                                   Referenced  .\STRTOL.C
 _isspace                          Defined     Z:\Users\adriweb\Documents\toolchain\src\std\shared\isspace.src
                                   Referenced  .\STRTOL.C
@@ -584,7 +639,7 @@ ___maptab                         Defined     .\MAPTAB.C
 
 OUTPUT CHECKSUM
 ===============
-bin/ROOTS.hex        05A613
+bin/ROOTS.hex        076FC5
 
 
 

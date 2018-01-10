@@ -27,6 +27,45 @@ void clearFromLeft(uint8_t rows, const char* clearString) {
     print(row, 0, clearString);
 }
 
+uint24_t moduloExponent(uint24_t base, uint24_t exponent, uint24_t modulo) {
+  int *powers = NULL;
+
+  uint32_t temp1, temp2, temp3;
+
+  /* highest power of two lower than n */
+  uint8_t maxExponent = 1;
+  int8_t i = 0;
+
+  maxExponent = floor(log(exponent) / log(2));
+  powers = (int*) malloc(maxExponent * sizeof(uint32_t));
+
+  temp1 = base % modulo;
+  powers[0] = temp1;
+
+  /* Calculate simplified products and print each step */
+  for (i = 1; i <= maxExponent; i++) {
+    temp1 = ipow(2, i);
+    temp2 = ipow(powers[i - 1], 2);
+    temp3 = temp2 % modulo;
+    powers[i] = temp3;
+  }
+
+  /* Calculate exponents needed */
+  temp1 = 0; /* current exponent */
+  temp3 = 1; /* current result */
+  for (i = maxExponent; i >= 0; i--) {
+    temp2 = ipow(2, i);
+    if (temp1 + temp2 <= exponent) {
+      temp1 += temp2;
+      temp3 = (temp3 * powers[i]) % modulo;
+    }
+  }
+
+  free(powers);
+
+  return temp3;
+}
+
 uint32_t ipow(uint32_t base, uint32_t exponent)
 {
   uint32_t result = 1;

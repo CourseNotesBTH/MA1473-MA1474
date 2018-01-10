@@ -22,6 +22,7 @@
   uint8_t print(int8_t row, int8_t column, const char *text);
   uint8_t printLine(int8_t row, const char *text);
   void clearFromLeft(uint8_t rows, const char* clearString);
+  uint24_t moduloExponent(uint24_t base, uint24_t exponent, uint24_t modulo);
   uint32_t ipow(uint32_t base, uint32_t exp);
   int ultoa(uint32_t value, char *string);
 #endif

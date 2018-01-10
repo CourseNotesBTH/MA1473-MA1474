@@ -4,12 +4,10 @@
 
 void handleTest() {
   char str[CHARACTER_WIDTH];
-  char str1[CHARACTER_WIDTH];
   char input[INPUT_SIZE];
 
   /* number to test, room, exponent, found "roots" */
-  uint24_t x = 0, n = 0, k = 1, ones = 0;
-  uint32_t temp1 = 0, temp2 = 0;
+  uint24_t x = 0, n = 0, k = 1, ones = 0, temp1 = 0;
 
   uint8_t row = 0;
 
@@ -21,15 +19,10 @@ void handleTest() {
   os_ClrHome();
 
   for (k = 1; k <= n; k++) {
-    temp1 = ipow(x, k);
-    temp2 = temp1 % n;
-    if (temp2 == 1)
+    temp1 = moduloExponent(x, k, n);
+    if (temp1 == 1)
       ones++;
-    sprintf(str, "%u^%u=", x, k);
-    ultoa(temp1, str1);
-    strcat(str, str1);
-    sprintf(str1, "=%u", temp2);
-    strcat(str, str1);
+    sprintf(str, "%u^%u=...=%u", x, k, temp1);
     row = printLine(row, str);
   }
 
