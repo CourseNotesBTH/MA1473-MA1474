@@ -41,6 +41,8 @@ There are some different type of files that you may come across in each course n
 | Calculator/Fermats/... | 🏳️  | Program and source for Texas Instruments' CE edition calculators for using Fermat's factorisation method to calculate the factors of semi-primes - step by step |
 | Calculator/Roots/... | 🏳️  | Program and source for Texas Instruments' CE edition calculators to determining and testing primitive roots - step by step |
 | Calculator/RSA/... | 🏳️  | Program and source for Texas Instruments calculators for encrypting and decrypting messages using RSA - step by step |
+| Calculator/ModPow/... | 🏳️  | Program and source for Texas Instruments calculators for calculating the power of huge numbers modulo another (i.e. `12^73 (mod 51)`) - step by step |
+| Calculator/Hill/... | 🏳️  | Program and source for Texas Instruments calculators for encryption using Hill crypto |
 
 # Purpose of the repository
 <a name="purpose"></a>
