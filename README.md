@@ -2,7 +2,7 @@
   <img alt="Logo" src="https://github.com/CourseNotesBTH/MA1473-MA1474/raw/master/logo.png">
 </p>
 
-MS1405 - Mathematical statistics
+MA1473 & MA1474 - Cryptology 1
 ======
 
 Course notes and the like for MA1473-MA1474 - Cryptology 1
